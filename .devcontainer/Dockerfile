@@ -5,6 +5,7 @@ ENV DPKG_MAINTSCRIPT_PACKAGE_WISE_STRICT_NOINITRAMFS=1
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    procps \
     ca-certificates \
     lsb-release \
     gnupg \

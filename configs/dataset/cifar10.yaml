@@ -1,0 +1,29 @@
+type: 'image_classification'
+
+name: 'CIFAR 10'
+hf_dataset_name_or_path: 'cifar10'
+
+splits:
+  - train
+  - test
+
+train_split: 'train'
+evaluation_split: 'test'
+
+input_column: 'img'
+label_column: 'label'
+
+num_classes: 10
+id2label:
+  0: airplane
+  1: automobile
+  2: bird
+  3: cat
+  4: deer
+  5: dog
+  6: frog
+  7: horse
+  8: ship
+  9: truck
+
+description: ''

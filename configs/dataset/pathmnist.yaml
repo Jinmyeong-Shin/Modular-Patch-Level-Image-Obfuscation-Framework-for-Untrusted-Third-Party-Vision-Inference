@@ -1,0 +1,29 @@
+type: 'image_classification'
+
+name: 'PathMNIST'
+hf_dataset_name_or_path: 'AISNP/PathMNIST'
+
+splits:
+  - train
+  - val
+  - test
+
+train_split: 'train'
+evaluation_split: 'test'
+
+input_column: 'image'
+label_column: 'label'
+
+num_classes: 9
+id2label:
+  0: 'adipose'
+  1: 'background' 
+  2: 'debris'
+  3: 'lymphocytes'
+  4: 'mucus'
+  5: 'smooth muscle'
+  6: 'normal colon mucosa'
+  7: 'cancer-associated stroma'
+  8: 'colorectal adenocarcinoma epithelium'
+
+description: ''

@@ -1,7 +1,12 @@
+ipykernel
+ipywidgets
 tqdm
 matplotlib
 scikit-learn
 torch
+torchvision
+torchmetrics
+pycocotools
 datasets
 transformers
 accelerate

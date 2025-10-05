@@ -8,7 +8,7 @@
         },
         "options": ["-t", "modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference"]
     },
-    "runArgs": ["--runtime", "nvidia", "--gpus", "all", "--name", "modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference"],
+    "runArgs": ["--ipc=host", "--runtime", "nvidia", "--gpus", "all", "--name", "modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference"],
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "postCreateCommand": "bash .devcontainer/scripts/install-dev-tools.sh",
