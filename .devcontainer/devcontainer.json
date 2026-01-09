@@ -1,0 +1,21 @@
+{
+    "name": "Modular Patch-Level Image Obfuscation Framework",
+    "image": "pytorch/pytorch:2.9.1-cuda13.0-cudnn9-runtime",
+    "workspaceFolder": "/workspace",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+
+    "runArgs": ["--runtime", "nvidia", "--gpus", "all"],
+    
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.automationProfile.linux": {
+                    "path": "bash"
+                }
+            }
+        }
+    }
+}
