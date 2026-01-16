@@ -1,0 +1,10 @@
+ipykernel
+ipywidgets
+matplotlib
+tqdm
+datasets
+transformers
+accelerate
+scikit-learn
+torchmetrics
+pycocotools

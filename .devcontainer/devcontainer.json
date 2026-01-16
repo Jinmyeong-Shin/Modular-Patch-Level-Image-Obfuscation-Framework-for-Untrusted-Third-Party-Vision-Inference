@@ -8,6 +8,8 @@
     },
 
     "runArgs": ["--runtime", "nvidia", "--gpus", "all"],
+
+    "postCreateCommand": "conda install -y --file requirements.txt",
     
     "customizations": {
         "vscode": {
