@@ -10,7 +10,11 @@
 
     "runArgs": ["--runtime", "nvidia", "--gpus", "all"],
 
-    "postCreateCommand": "pip install -r requirements.txt",
+    "postCreateCommand": "python3 -m venv /workspace/.venv && /workspace/.venv/bin/pip install -r requirements.txt",
+    "remoteEnv": {
+      "PATH": "/workspace/.venv/bin:${containerEnv:PATH}",
+      "VIRTUAL_ENV": "/workspace/.venv"
+    },
     
     "customizations": {
         "vscode": {
