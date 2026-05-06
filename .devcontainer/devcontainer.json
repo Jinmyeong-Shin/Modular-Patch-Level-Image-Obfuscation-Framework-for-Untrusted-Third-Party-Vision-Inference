@@ -1,6 +1,6 @@
 {
     "name": "Modular Patch-Level Image Obfuscation Framework",
-    "image": "pytorch/pytorch:2.9.1-cuda13.0-cudnn9-runtime",
+    "image": "pytorch/pytorch:2.11.0-cuda13.0-cudnn9-runtime",
     "workspaceFolder": "/workspace",
     
     "features": {
