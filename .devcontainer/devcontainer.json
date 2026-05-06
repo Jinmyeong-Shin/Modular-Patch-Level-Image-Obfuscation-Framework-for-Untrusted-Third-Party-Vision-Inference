@@ -8,7 +8,7 @@
         "ghcr.io/devcontainers/features/node:1": { "version": "22" }
     },
 
-    "runArgs": ["--runtime", "nvidia", "--gpus", "all"],
+    "runArgs": [],
 
     "postCreateCommand": "python3 -m venv /workspace/.venv && /workspace/.venv/bin/pip install -r requirements.txt",
     "remoteEnv": {
