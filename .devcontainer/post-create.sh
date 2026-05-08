@@ -8,21 +8,7 @@ warn() { printf '\n!!! %s !!!\n' "$*" >&2; }
 export DEBIAN_FRONTEND=noninteractive
 
 #------------------------------------------------------------------------------
-# 1. CUDA runtime
-#------------------------------------------------------------------------------
-log "Installing CUDA 13.2 runtime"
-if ! wget -qO /tmp/cuda-keyring.deb \
-        https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/cuda-keyring_1.1-1_all.deb \
-    || ! dpkg -i /tmp/cuda-keyring.deb \
-    || ! apt-get update \
-    || ! apt-get install -y --no-install-recommends cuda-runtime-13-2; then
-    warn "CUDA install failed. The container will continue without CUDA."
-fi
-rm -f /tmp/cuda-keyring.deb
-rm -rf /var/lib/apt/lists/*
-
-#------------------------------------------------------------------------------
-# 2. Project Python deps
+# 1. Project Python deps
 #------------------------------------------------------------------------------
 log "Installing Python dependencies"
 if [ -f /workspace/requirements.txt ]; then
@@ -34,7 +20,7 @@ else
 fi
 
 #------------------------------------------------------------------------------
-# 3. Claude Code (only if host credentials exist AND CPU supports AVX)
+# 2. Claude Code (only if host credentials exist AND CPU supports AVX)
 #------------------------------------------------------------------------------
 log "Checking Claude Code prerequisites"
 
