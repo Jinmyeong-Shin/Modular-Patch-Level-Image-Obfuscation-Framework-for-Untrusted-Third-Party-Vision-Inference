@@ -1,8 +1,6 @@
 {
     "name": "Modular Patch-Level Image Obfuscation Framework",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "image": "ghcr.io/jinmyeong-shin/modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference:latest",
     "workspaceFolder": "/workspace",
     "runArgs": ["--gpus", "all"],
 
@@ -13,5 +11,5 @@
         "source=${localEnv:HOME}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached"
     ],
 
-    "postCreateCommand": "set -e && export DEBIAN_FRONTEND=noninteractive && wget -qO /tmp/cuda-keyring.deb https://developer.download.nvidia.com/compute/cuda/repos/debian13/x86_64/cuda-keyring_1.1-1_all.deb && dpkg -i /tmp/cuda-keyring.deb && rm /tmp/cuda-keyring.deb && apt-get update && apt-get install -y --no-install-recommends cuda-runtime-13-2 && rm -rf /var/lib/apt/lists/* && pip install -r requirements.txt && if [ -s /root/.claude/.credentials.json ]; then echo '--- Host Claude credentials detected. Installing Claude Code... ---' && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y --no-install-recommends nodejs && curl -fsSL https://claude.ai/install.sh | bash && echo '--- Claude Code ready. Uses your host credentials from ~/.claude. ---'; else echo '--- No host Claude credentials found. Skipping Claude Code install. ---'; fi"
+    "postCreateCommand": "pip install -r requirements.txt && if [ -s /root/.claude/.credentials.json ]; then echo '--- Host Claude credentials detected. Installing Claude Code... ---' && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y --no-install-recommends nodejs && curl -fsSL https://claude.ai/install.sh | bash && echo '--- Claude Code ready. Uses your host credentials from ~/.claude. ---'; else echo '--- No host Claude credentials found. Skipping Claude Code install. ---'; fi"
 }
