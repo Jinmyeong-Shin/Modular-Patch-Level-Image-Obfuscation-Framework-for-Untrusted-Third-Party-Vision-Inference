@@ -3,7 +3,7 @@
     "image": "ghcr.io/jinmyeong-shin/modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference:latest",
     "workspaceFolder": "/workspace",
 
-    "runArgs": ["--gpus", "all"],
+    "runArgs": ["--gpus", "all", "--cpu-model=host"],
 
     "postCreateCommand": "pip install -r /workspace/requirements.txt"
 }
