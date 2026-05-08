@@ -4,12 +4,5 @@
     "workspaceFolder": "/workspace",
     "runArgs": ["--gpus", "all"],
 
-    "initializeCommand": "mkdir -p ${localEnv:HOME}/.claude && touch ${localEnv:HOME}/.claude.json",
-
-    "mounts": [
-        "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached",
-        "source=${localEnv:HOME}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached"
-    ],
-
-    "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh 2>&1 | tee /tmp/post-create.log"
+    "postCreateCommand": "pip install -r /workspace/requirements.txt"
 }
