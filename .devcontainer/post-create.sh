@@ -44,14 +44,9 @@ if ! curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 fi
 
 log "Installing Claude Code"
-if ! curl -fsSL https://claude.ai/install.sh | bash; then
-    warn "Claude Code install script failed."
+if ! npm install -g @anthropic-ai/claude-code; then
+    warn "npm install of Claude Code failed."
     exit 0
-fi
-
-# The installer drops the binary in /root/.local/bin; symlink so non-login shells find it
-if [ -x /root/.local/bin/claude ] && [ ! -e /usr/local/bin/claude ]; then
-    ln -s /root/.local/bin/claude /usr/local/bin/claude
 fi
 
 if command -v claude >/dev/null 2>&1; then
