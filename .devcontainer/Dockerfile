@@ -1,4 +1,4 @@
-FROM docker.io/python:3.14-trixie
+FROM docker.io/python:3.14-bookwarm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
