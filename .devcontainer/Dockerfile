@@ -1,4 +1,4 @@
-FROM docker.io/python:3.14-trixie
+FROM --platform=linux/amd64 docker.io/python:3.14-trixie
 
 ENV DEBIAN_FRONTEND=noninteractive
 

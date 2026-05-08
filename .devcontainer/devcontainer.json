@@ -11,5 +11,11 @@
         "source=${localEnv:HOME}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached"
     ],
 
-    "postCreateCommand": "pip install -r requirements.txt && if [ -s /root/.claude/.credentials.json ]; then echo '--- Host Claude credentials detected. Installing Claude Code... ---' && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y --no-install-recommends nodejs && curl -fsSL https://claude.ai/install.sh | bash && echo '--- Claude Code ready. Uses your host credentials from ~/.claude. ---'; else echo '--- No host Claude credentials found. Skipping Claude Code install. ---'; fi"
+    "postCreateCommand": "bash /workspace/.devcontainer/post-create.sh 2>&1 | tee /tmp/post-create.log",
+
+    "customizations": {
+        "settings": {
+            "terminal.integrated.shell.linux": "/bin/bash"
+        }
+    }
 }
