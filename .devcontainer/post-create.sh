@@ -44,7 +44,7 @@ if ! curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 fi
 
 log "Installing Claude Code"
-if ! npm install -g @anthropic-ai/claude-code; then
+if ! npm install -g @anthropic-ai/claude-code@2.1.110; then
     warn "npm install of Claude Code failed."
     exit 0
 fi
