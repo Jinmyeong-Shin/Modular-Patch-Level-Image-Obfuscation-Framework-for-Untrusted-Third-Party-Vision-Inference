@@ -2,9 +2,10 @@
     "name": "Modular Patch-Level Image Obfuscation Framework",
     "image": "ghcr.io/jinmyeong-shin/modular-patch-level-image-obfuscation-framework-for-untrusted-third-party-vision-inference:latest",
     "workspaceFolder": "/workspace",
-
-    "ghcr.io/devcontainers/features/node:1": {
-        "version": "22"
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "22"
+        }
     },
 
     "runArgs": ["--gpus", "all"],
