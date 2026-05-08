@@ -1,4 +1,4 @@
-FROM docker.io/python:3.14-bookwarm
+FROM docker.io/python:3.14-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 
