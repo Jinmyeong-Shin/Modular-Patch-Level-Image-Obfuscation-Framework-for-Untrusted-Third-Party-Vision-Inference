@@ -1,4 +1,4 @@
-FROM docker.io/python:3.14-trixie
+FROM mcr.microsoft.com/devcontainers/python:3.14-trixie
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -42,9 +42,9 @@ RUN chsh -s /bin/bash root \
         '# Source .bashrc for login shells too' \
         '[ -f ~/.bashrc ] && . ~/.bashrc' \
         > /root/.bash_profile
- 
+
 # Make bash the default shell for RUN/CMD too
 SHELL ["/bin/bash", "-c"]
- 
+
 # Tell terminal launchers to use bash
 ENV SHELL=/bin/bash
