@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vit-obfuscation"
+version = "0.1.0"
+description = "Modular Patch-Level Image Obfuscation Framework for Vision Transformers"
+requires-python = ">=3.11"
+dependencies = [
+    "torch",
+    "torchvision",
+    "transformers",
+    "datasets",
+    "accelerate",
+    "scikit-learn",
+    "torchmetrics",
+    "pycocotools",
+    "tqdm",
+    "pyyaml",
+    "matplotlib",
+]
+
+[project.scripts]
+vit-obfuscation = "vit_obfuscation.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

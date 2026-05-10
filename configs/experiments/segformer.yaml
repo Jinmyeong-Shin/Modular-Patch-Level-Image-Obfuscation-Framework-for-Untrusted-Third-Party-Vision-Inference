@@ -1,0 +1,29 @@
+name: segformer-ade20k
+description: SegFormer segmentation on ADE20K
+
+model:
+  hf_model_name_or_path: nvidia/segformer-b0-finetuned-ade-512-512
+  task: segmentation
+  num_classes: 150
+
+obfuscation:
+  patch_size: 14
+  group_size: 100
+
+embedding_training:
+  iterations: 5000
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: scene_parse_150
+  input_column: image
+  label_column: annotation
+  train_split: train
+  eval_split: test
+  num_classes: 150
+
+evaluation:
+  batch_size: 32
+
+seed: 42

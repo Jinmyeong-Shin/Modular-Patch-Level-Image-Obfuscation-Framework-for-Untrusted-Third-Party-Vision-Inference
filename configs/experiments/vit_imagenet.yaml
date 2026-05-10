@@ -1,0 +1,33 @@
+name: vit-imagenet
+description: ViT classification on ImageNet-1k
+
+model:
+  hf_model_name_or_path: google/vit-base-patch16-224
+  task: classification
+  num_classes: 1000
+
+obfuscation:
+  patch_size: 14
+  group_size: 100
+
+embedding_training:
+  iterations: 5000
+  learning_rate: 0.01
+  batch_size: 32
+
+task_training:
+  iterations: 1000
+  learning_rate: 0.0001
+  batch_size: 256
+
+dataset:
+  hf_dataset_name_or_path: benjamin-paine/imagenet-1k-256x256
+  input_column: image
+  label_column: label
+  train_split: train
+  eval_split: validation
+
+evaluation:
+  batch_size: 256
+
+seed: 42

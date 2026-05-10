@@ -1,0 +1,38 @@
+name: clip-zero-shot-cifar10
+description: CLIP zero-shot classification on CIFAR-10
+
+model:
+  hf_model_name_or_path: openai/clip-vit-base-patch32
+  task: zero_shot_classification
+  id2label:
+    0: airplane
+    1: automobile
+    2: bird
+    3: cat
+    4: deer
+    5: dog
+    6: frog
+    7: horse
+    8: ship
+    9: truck
+
+obfuscation:
+  patch_size: 14
+  group_size: 100
+
+embedding_training:
+  iterations: 5000
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: cifar10
+  input_column: img
+  label_column: label
+  train_split: train
+  eval_split: test
+
+evaluation:
+  batch_size: 256
+
+seed: 42
