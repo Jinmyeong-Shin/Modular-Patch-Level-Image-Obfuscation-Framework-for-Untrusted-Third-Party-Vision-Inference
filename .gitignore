@@ -208,3 +208,12 @@ __marimo__/
 
 # Claude
 .claude/
+
+# Large checkpoint files
+outputs/checkpoints/*.pt
+
+# Temporary log files
+experiment_log.txt
+experiment_log_current.txt
+*_out.txt
+outputs/.last_completed

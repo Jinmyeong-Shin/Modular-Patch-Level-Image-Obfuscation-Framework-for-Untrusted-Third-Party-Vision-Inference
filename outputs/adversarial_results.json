@@ -1,0 +1,30 @@
+{
+  "attacks": {
+    "obfuscated (no attack)": {
+      "ssim": 0.0027546058408915997,
+      "psnr": 10.203740031988328
+    },
+    "MI-FGSM": {
+      "ssim": 0.016696935519576073,
+      "psnr": 11.410368054845145
+    },
+    "L-BFGS": {
+      "ssim": 0.0010055312886834145,
+      "psnr": 6.908334977079279
+    },
+    "Adversarial VAE": {
+      "ssim": 0.04766503721475601,
+      "psnr": 12.050036443341634
+    },
+    "CycleGAN": {
+      "ssim": 0.0431084930896759,
+      "psnr": 9.184257930529952
+    }
+  },
+  "side_channel": {
+    "frequency_correlation": 0.0005959812588874532,
+    "spatial_autocorrelation": -0.166354055366052,
+    "histogram_kl_divergence": 2.1327235988186053,
+    "mutual_information": 0.04376044496893883
+  }
+}
