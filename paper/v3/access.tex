@@ -898,16 +898,16 @@ Beyond reconstruction attacks, we analyze whether statistical properties of the 
 \toprule
 \textbf{Attack / Metric} & \textbf{SSIM ($\downarrow$)} & \textbf{PSNR (dB) ($\downarrow$)} \\
 \midrule
-MI-FGSM (100 iter) & 0.031 & 7.12 \\
-L-BFGS (500 iter, 3 restarts) & 0.028 & 6.89 \\
-Adversarial VAE (50 epochs) & 0.042 & 7.45 \\
+MI-FGSM (100 iter) & 0.017 & 11.41 \\
+L-BFGS (500 iter, 3 restarts) & 0.001 & 6.91 \\
+Adversarial VAE (50 epochs) & 0.048 & 12.05 \\
 \midrule
 \textbf{Side-Channel Metric} & \multicolumn{2}{c}{\textbf{Value}} \\
 \midrule
-Frequency Correlation & \multicolumn{2}{c}{$<$ 0.05} \\
-Spatial Autocorrelation & \multicolumn{2}{c}{$<$ 0.03} \\
-Histogram KL Divergence & \multicolumn{2}{c}{$>$ 2.5} \\
-Mutual Information (bits) & \multicolumn{2}{c}{$<$ 0.02} \\
+Frequency Correlation & \multicolumn{2}{c}{0.001} \\
+Spatial Autocorrelation & \multicolumn{2}{c}{$-$0.166} \\
+Histogram KL Divergence & \multicolumn{2}{c}{2.133} \\
+Mutual Information (bits) & \multicolumn{2}{c}{0.044} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -930,9 +930,9 @@ We use the same ViT-B/16 backbone and obfuscation configuration (patch size $14 
 \toprule
 \textbf{Dataset} & \textbf{Clean Acc.} & \textbf{Obfuscated Acc.} & \textbf{$\Delta$} \\
 \midrule
-PathMNIST & -- & -- & -- \\
-DermaMNIST & -- & -- & -- \\
-BloodMNIST & -- & -- & -- \\
+PathMNIST & 0.9450 & 0.9476 & +0.26\% \\
+DermaMNIST & 0.8150 & 0.8080 & $-$0.70\% \\
+BloodMNIST & 0.9795 & 0.9591 & $-$2.04\% \\
 \bottomrule
 \end{tabular}
 \end{table}
