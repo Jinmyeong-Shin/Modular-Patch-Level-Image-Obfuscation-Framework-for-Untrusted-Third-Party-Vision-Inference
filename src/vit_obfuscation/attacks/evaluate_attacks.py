@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 
 from ..obfuscation.obfuscator import ChannelWisePatchLevelObfuscator
+from .cyclegan_attack import cyclegan_reconstruct, train_cyclegan_attack
 from .lbfgs_inversion import lbfgs_inversion_attack
 from .mi_fgsm import SimpleUNet, mi_fgsm_attack, train_reconstruction_model
 from .vae_reconstruction import train_vae_attack, vae_reconstruct
@@ -63,6 +64,7 @@ def evaluate_all_attacks(
     obfuscated_images: torch.Tensor,
     unet_epochs: int = 50,
     vae_epochs: int = 50,
+    cyclegan_epochs: int = 100,
     mi_fgsm_steps: int = 100,
     lbfgs_iterations: int = 200,
     lbfgs_restarts: int = 3,
@@ -110,5 +112,16 @@ def evaluate_all_attacks(
     psnr_vae = compute_psnr(vae_recon, original_images)
     results.append(AttackResult("Adversarial VAE", ssim_vae, psnr_vae, vae_recon))
     logger.info(f"VAE — SSIM: {ssim_vae:.4f}, PSNR: {psnr_vae:.2f} dB")
+
+    # 4. CycleGAN
+    logger.info("Running CycleGAN reconstruction attack...")
+    cyclegan_gen = train_cyclegan_attack(
+        obfuscated_images, original_images, epochs=cyclegan_epochs
+    )
+    cyclegan_recon = cyclegan_reconstruct(cyclegan_gen, obfuscated_images)
+    ssim_cg = compute_ssim(cyclegan_recon, original_images)
+    psnr_cg = compute_psnr(cyclegan_recon, original_images)
+    results.append(AttackResult("CycleGAN", ssim_cg, psnr_cg, cyclegan_recon))
+    logger.info(f"CycleGAN — SSIM: {ssim_cg:.4f}, PSNR: {psnr_cg:.2f} dB")
 
     return results

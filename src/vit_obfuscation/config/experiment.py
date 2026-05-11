@@ -38,6 +38,7 @@ class TaskTrainingConfig:
 @dataclass
 class DatasetConfig:
     hf_dataset_name_or_path: str = ""
+    subset: str | None = None
     input_column: str = "image"
     label_column: str = "label"
     train_split: str = "train"

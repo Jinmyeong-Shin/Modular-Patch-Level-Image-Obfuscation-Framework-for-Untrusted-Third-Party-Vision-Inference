@@ -59,12 +59,17 @@ def load_classification_dataset(
     input_column: str,
     train_split: str = "train",
     eval_split: str = "test",
+    subset: str | None = None,
 ) -> tuple[datasets.Dataset, datasets.Dataset]:
     """Load a classification dataset with RGB conversion."""
-    train_dataset = datasets.load_dataset(hf_dataset_name_or_path, split=train_split)
+    train_dataset = datasets.load_dataset(
+        hf_dataset_name_or_path, name=subset, split=train_split
+    )
     train_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
 
-    eval_dataset = datasets.load_dataset(hf_dataset_name_or_path, split=eval_split)
+    eval_dataset = datasets.load_dataset(
+        hf_dataset_name_or_path, name=subset, split=eval_split
+    )
     eval_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
 
     return train_dataset, eval_dataset
@@ -76,6 +81,7 @@ def load_detection_dataset(
     label_column: str,
     train_split: str = "train",
     eval_split: str = "validation",
+    subset: str | None = None,
 ) -> tuple[datasets.Dataset, datasets.Dataset]:
     """Load an object detection dataset with RGB conversion and annotation reformatting."""
 
@@ -84,10 +90,14 @@ def load_detection_dataset(
         ex = _reformat_detection_labels(ex, label_column)
         return ex
 
-    train_dataset = datasets.load_dataset(hf_dataset_name_or_path, split=train_split)
+    train_dataset = datasets.load_dataset(
+        hf_dataset_name_or_path, name=subset, split=train_split
+    )
     train_dataset.set_transform(transform)
 
-    eval_dataset = datasets.load_dataset(hf_dataset_name_or_path, split=eval_split)
+    eval_dataset = datasets.load_dataset(
+        hf_dataset_name_or_path, name=subset, split=eval_split
+    )
     eval_dataset.set_transform(transform)
 
     return train_dataset, eval_dataset

@@ -104,6 +104,7 @@ class SegmentationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         accelerator = accelerate.Accelerator()
@@ -175,6 +176,7 @@ class SegmentationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         num_classes = cfg.dataset.num_classes or cfg.model.num_classes or 150
@@ -299,6 +301,7 @@ class ZeroShotSegmentationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         id2label = cfg.dataset.id2label or cfg.model.id2label

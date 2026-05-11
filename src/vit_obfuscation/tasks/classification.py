@@ -86,6 +86,7 @@ class ClassificationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         accelerator = accelerate.Accelerator()
@@ -164,6 +165,7 @@ class ClassificationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         accelerator = accelerate.Accelerator()
@@ -279,6 +281,7 @@ class ZeroShotClassificationTask(BaseTask):
             cfg.dataset.input_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         # Get label names for zero-shot

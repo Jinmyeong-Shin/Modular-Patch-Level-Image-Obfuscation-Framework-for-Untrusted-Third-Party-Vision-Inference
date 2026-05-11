@@ -88,6 +88,7 @@ class ObjectDetectionTask(BaseTask):
             cfg.dataset.label_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         accelerator = accelerate.Accelerator()
@@ -166,6 +167,7 @@ class ObjectDetectionTask(BaseTask):
             cfg.dataset.label_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         def collate_fn(batch):
@@ -319,6 +321,7 @@ class ZeroShotObjectDetectionTask(BaseTask):
             cfg.dataset.label_column,
             cfg.dataset.train_split,
             cfg.dataset.eval_split,
+            subset=cfg.dataset.subset,
         )
 
         id2label = cfg.dataset.id2label or cfg.model.id2label

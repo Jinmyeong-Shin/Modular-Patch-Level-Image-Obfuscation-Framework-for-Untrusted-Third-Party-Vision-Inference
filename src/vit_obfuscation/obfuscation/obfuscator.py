@@ -20,6 +20,7 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
         num_channels: int,
         patch_size: int,
         group_size: int,
+        use_tanh: bool = True,
     ) -> None:
         super().__init__()
 
@@ -36,6 +37,7 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
         self.num_channels = num_channels
         self.patch_size = patch_size
         self.group_size = group_size
+        self.use_tanh = use_tanh
 
         H, W = self.image_size
         num_patches = (H // patch_size) * (W // patch_size)
@@ -118,4 +120,6 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
         # Channel permutation
         x_out = x_out[:, self.channel_permutation]
 
-        return F.tanh(x_out)
+        if self.use_tanh:
+            return F.tanh(x_out)
+        return x_out
