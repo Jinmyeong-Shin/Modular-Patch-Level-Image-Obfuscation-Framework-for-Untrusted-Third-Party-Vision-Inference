@@ -67,7 +67,7 @@ def _load_medmnist_as_hf(
         .replace("blood", "Blood")
     )
     DatasetClass = getattr(medmnist, cls_name)
-    ds = DatasetClass(split=split, download=True, size=224)
+    ds = DatasetClass(split=split, download=True, size=28)
 
     images = []
     labels = []
