@@ -135,12 +135,41 @@ class ExperimentRunner:
         adapter = ModelAdapter(model)
         vision_config = adapter.get_vision_config()
 
-        image_size = getattr(vision_config, "image_size", 224)
+        # Determine actual image size from processor (more reliable than vision_config)
+        _proc_size = getattr(
+            getattr(processor, "image_processor", processor), "size", {}
+        )
+        if isinstance(_proc_size, dict):
+            _proc_h = _proc_size.get("height") or _proc_size.get("shortest_edge")
+            _proc_w = _proc_size.get("width") or _proc_size.get("shortest_edge")
+        else:
+            _proc_h = _proc_w = None
+
+        vc_image_size = getattr(vision_config, "image_size", 224)
+        if isinstance(vc_image_size, (list, tuple)):
+            vc_image_size = vc_image_size[0]
+
+        # Prefer processor size when available and square
+        if _proc_h and _proc_w and _proc_h == _proc_w:
+            image_size = _proc_h
+        else:
+            image_size = vc_image_size
+
         num_channels = getattr(vision_config, "num_channels", 3)
-        model_patch_size = getattr(vision_config, "patch_size", 16)
+        model_patch_size = getattr(vision_config, "patch_size", None)
+        if model_patch_size is None:
+            # SegFormer uses patch_sizes (list); take the first
+            patch_sizes = getattr(vision_config, "patch_sizes", [16])
+            model_patch_size = patch_sizes[0]
+
+        # hidden_size: SegFormer uses hidden_sizes (list); take the last
+        embed_dim = getattr(vision_config, "hidden_size", None)
+        if embed_dim is None:
+            hidden_sizes = getattr(vision_config, "hidden_sizes", [768])
+            embed_dim = hidden_sizes[-1]
 
         logger.info(
-            f"Vision config: image_size={image_size}, patch_size={model_patch_size}"
+            f"Vision config: image_size={image_size}, patch_size={model_patch_size}, embed_dim={embed_dim}"
         )
 
         # 3. Create obfuscation modules
@@ -156,7 +185,7 @@ class ExperimentRunner:
             image_size=image_size,
             num_channels=num_channels,
             patch_size=model_patch_size,
-            embed_dim=vision_config.hidden_size,
+            embed_dim=embed_dim,
             num_extra_tokens=num_extra_tokens,
         )
 
@@ -195,15 +224,15 @@ class ExperimentRunner:
             config=config,
         )
 
-        # 7. Evaluate clean baseline
-        logger.info("Evaluating clean baseline...")
-        clean_results = task.evaluate(with_obfuscation=False)
-        logger.info(f"Clean results: {clean_results}")
-
-        # 8. Train task if needed
+        # 7. Train task if needed (must happen before evaluation)
         if config.task_training is not None:
             logger.info("Training task-specific components...")
             task.train_task()
+
+        # 8. Evaluate clean baseline (with trained task head)
+        logger.info("Evaluating clean baseline...")
+        clean_results = task.evaluate(with_obfuscation=False)
+        logger.info(f"Clean results: {clean_results}")
 
         # 9. Evaluate with obfuscation
         logger.info("Evaluating with obfuscation...")

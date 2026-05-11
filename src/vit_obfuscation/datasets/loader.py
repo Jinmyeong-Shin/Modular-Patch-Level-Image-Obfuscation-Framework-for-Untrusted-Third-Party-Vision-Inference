@@ -54,6 +54,33 @@ def _reformat_single_detection(objects) -> list[dict]:
     return annotations
 
 
+def _load_medmnist_as_hf(
+    subset: str, split: str, input_column: str, label_column: str
+) -> datasets.Dataset:
+    """Load a MedMNIST dataset via the medmnist pip package and wrap as HF Dataset."""
+    import medmnist
+
+    cls_name = (
+        subset.replace("mnist", "MNIST")
+        .replace("path", "Path")
+        .replace("derm", "Derm")
+        .replace("blood", "Blood")
+    )
+    DatasetClass = getattr(medmnist, cls_name)
+    ds = DatasetClass(split=split, download=True, size=224)
+
+    images = []
+    labels = []
+    for i in range(len(ds)):
+        img, label = ds[i]
+        images.append(img.convert("RGB"))
+        labels.append(int(label[0]))
+
+    return datasets.Dataset.from_dict(
+        {input_column: images, label_column: labels}
+    ).cast_column(input_column, datasets.Image())
+
+
 def load_classification_dataset(
     hf_dataset_name_or_path: str,
     input_column: str,
@@ -62,14 +89,20 @@ def load_classification_dataset(
     subset: str | None = None,
 ) -> tuple[datasets.Dataset, datasets.Dataset]:
     """Load a classification dataset with RGB conversion."""
-    train_dataset = datasets.load_dataset(
-        hf_dataset_name_or_path, name=subset, split=train_split
-    )
-    train_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
+    is_medmnist = "medmnist" in hf_dataset_name_or_path.lower() and subset is not None
 
-    eval_dataset = datasets.load_dataset(
-        hf_dataset_name_or_path, name=subset, split=eval_split
-    )
+    if is_medmnist:
+        train_dataset = _load_medmnist_as_hf(subset, train_split, input_column, "label")
+        eval_dataset = _load_medmnist_as_hf(subset, eval_split, input_column, "label")
+    else:
+        train_dataset = datasets.load_dataset(
+            hf_dataset_name_or_path, name=subset, split=train_split
+        )
+        eval_dataset = datasets.load_dataset(
+            hf_dataset_name_or_path, name=subset, split=eval_split
+        )
+
+    train_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
     eval_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
 
     return train_dataset, eval_dataset
