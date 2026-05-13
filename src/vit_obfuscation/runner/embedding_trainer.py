@@ -102,6 +102,9 @@ class EmbeddingTrainer:
             # Get clean embeddings from original model
             with torch.no_grad():
                 clean_embeddings = original_embeddings(pixel_values)
+                # Some models (e.g., BEiT) return a tuple; take the first element
+                if isinstance(clean_embeddings, tuple):
+                    clean_embeddings = clean_embeddings[0]
 
             # Get obfuscated embeddings
             obfuscated_pixels = obfuscator(pixel_values)

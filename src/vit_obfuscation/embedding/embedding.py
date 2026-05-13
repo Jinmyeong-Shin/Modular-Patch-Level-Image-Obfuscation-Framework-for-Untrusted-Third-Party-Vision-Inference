@@ -141,7 +141,9 @@ class ObfuscationEmbedding(nn.Module):
         if interpolate_pos_encoding:
             x_out = x_out + self.interpolate_pos_encoding(x_out, H, W)
         else:
-            if isinstance(self.position_embedding, nn.Embedding):
+            if self.position_embedding is None:
+                pass  # Model uses relative position bias (e.g., BEiT)
+            elif isinstance(self.position_embedding, nn.Embedding):
                 x_out = x_out + self.position_embedding(self.position_ids)
             elif isinstance(self.position_embedding, nn.Parameter):
                 x_out = x_out + self.position_embedding

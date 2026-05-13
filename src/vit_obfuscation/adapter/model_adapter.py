@@ -71,8 +71,10 @@ class ModelAdapter:
 
         # Position embedding
         if self.spec.position_embedding_attr:
-            src_pos = getattr(src, self.spec.position_embedding_attr)
-            if isinstance(src_pos, nn.Embedding):
+            src_pos = getattr(src, self.spec.position_embedding_attr, None)
+            if src_pos is None:
+                target.position_embedding = None
+            elif isinstance(src_pos, nn.Embedding):
                 target.position_embedding = copy.deepcopy(src_pos)
             elif isinstance(src_pos, nn.Parameter):
                 target.position_embedding = nn.Parameter(src_pos.data.clone())
