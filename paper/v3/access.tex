@@ -747,6 +747,11 @@ This analysis suggests that global randomness and patch diversity play a more si
 & --     & --     & 0.9153 & --     & --     & --     \\
 &       &        &        & 14x14 & 16x16 & 0.9098 & --     & --     & --     \\
 
+& \multirow{2}{*}{ImageNet-1K}
+& \multirow{2}{*}{ViT-B/16} & \multirow{2}{*}{224}
+& --     & --     & 0.7948 & --     & --     & --     \\
+&       &        &        & 14x14 & 16x16 & 0.7450 & --     & --     & --     \\
+
 \midrule
 \multirow{8}{*}{\shortstack{Zero-Shot\\Classification}}
 & \multirow{4}{*}{CIFAR-10}
@@ -816,7 +821,7 @@ This analysis suggests that global randomness and patch diversity play a more si
 
 To assess the practical utility and generalization of the proposed privacy-preserving inference framework, we evaluate its performance across multiple tasks, datasets, and model types under both standard and obfuscated settings. Table~\ref{tab:performance} summarizes the top-1 classification accuracy and word-level OCR metrics for models with and without the obfuscator–deobfuscator pipeline.
 
-Classification on CIFAR-10, CIFAR-100 and {Tiny-ImageNet~}\cite{Le2015TinyIV} shows that the performance degradation due to obfuscation is relatively modest when patch sizes are sufficiently fine-grained. For instance, ViT-B/16 and ViT-L/16 on CIFAR-10 retain $99.13\%$ and $99.37\%$ top-1 accuracy respectively with obfuscation, representing less than $1.5\%$ degradation compared to the original baselines. Similar trends are observed on CIFAR-100 and {Tiny-ImageNet}, where ViT-L/16 retains over $90\%$ accuracy under obfuscation.
+Classification on CIFAR-10, CIFAR-100, {Tiny-ImageNet~}\cite{Le2015TinyIV}, and ImageNet-1K~\cite{imagenet15russakovsky} shows that the performance degradation due to obfuscation is relatively modest when patch sizes are sufficiently fine-grained. For instance, ViT-B/16 and ViT-L/16 on CIFAR-10 retain $99.13\%$ and $99.37\%$ top-1 accuracy respectively with obfuscation, representing less than $1.5\%$ degradation compared to the original baselines. Similar trends are observed on CIFAR-100 and {Tiny-ImageNet}, where ViT-L/16 retains over $90\%$ accuracy under obfuscation. On the larger-scale ImageNet-1K (1,000 classes), ViT-B/16 achieves $79.48\%$ clean accuracy and $74.50\%$ under obfuscation, a $4.98\%$ degradation that reflects the increased difficulty of fine-grained classification across a much larger label space.
 
 Zero-shot classification using CLIP also demonstrates robustness under the proposed obfuscation. CLIP-B/16 and CLIP-L/14 maintain strong performance on CIFAR-10, CIFAR-100 and {Tiny-ImageNet}, with only a $1.5$–$3.0\%$ absolute drop in top-1 accuracy when switching from clean input to obfuscated input followed by deobfuscation. Notably, the patch sizes between the obfuscator and deobfuscator are intentionally mismatched (e.g., $14\times14$ vs. $16\times16$), contributing to increased privacy while preserving classification performance.
 
