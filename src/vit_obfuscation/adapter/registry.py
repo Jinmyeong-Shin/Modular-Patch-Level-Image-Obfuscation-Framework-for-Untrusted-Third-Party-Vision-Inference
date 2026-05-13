@@ -66,6 +66,24 @@ _KNOWN_SPECS: dict[str, EmbeddingSpec] = {
         position_is_nn_embedding=True,
         vision_config_path="vision_config",
     ),
+    "beit": EmbeddingSpec(
+        embedding_path="embeddings",
+        cls_token_attr="cls_token",
+        position_embedding_attr="position_embeddings",
+        position_is_nn_embedding=True,
+    ),
+    "vit_mae": EmbeddingSpec(
+        embedding_path="embeddings",
+        cls_token_attr="cls_token",
+        position_embedding_attr="position_embeddings",
+        position_is_nn_embedding=True,
+    ),
+    "vit_msn": EmbeddingSpec(
+        embedding_path="embeddings",
+        cls_token_attr="cls_token",
+        position_embedding_attr="position_embeddings",
+        position_is_nn_embedding=True,
+    ),
     "segformer": EmbeddingSpec(
         embedding_path="segformer.encoder.patch_embeddings",
         cls_token_attr=None,

@@ -1,0 +1,33 @@
+name: deit-cifar10
+description: DeiT-B/16 classification on CIFAR-10 (data-efficient ViT)
+
+model:
+  hf_model_name_or_path: facebook/deit-base-patch16-224
+  task: classification
+  num_classes: 10
+
+obfuscation:
+  patch_size: 14
+  group_size: 100
+
+embedding_training:
+  iterations: 5000
+  learning_rate: 0.01
+  batch_size: 32
+
+task_training:
+  iterations: 1000
+  learning_rate: 0.0001
+  batch_size: 256
+
+dataset:
+  hf_dataset_name_or_path: cifar10
+  input_column: img
+  label_column: label
+  train_split: train
+  eval_split: test
+
+evaluation:
+  batch_size: 256
+
+seed: 42

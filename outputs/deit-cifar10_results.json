@@ -1,0 +1,17 @@
+{
+  "experiment": "deit-cifar10",
+  "model": "facebook/deit-base-patch16-224",
+  "task": "classification",
+  "clean": {
+    "accuracy": 0.9828,
+    "recall": 0.9827999999999999,
+    "precision": 0.9828175134990123,
+    "f1": 0.9827977665428953
+  },
+  "obfuscated": {
+    "accuracy": 0.9821,
+    "recall": 0.9821,
+    "precision": 0.9821156472632424,
+    "f1": 0.982092282370336
+  }
+}
