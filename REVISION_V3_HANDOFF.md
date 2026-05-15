@@ -14,6 +14,97 @@ Revise `paper/v3` after the experiment/artifact freeze. The paper should answer 
 
 Do not make the paper sound personally targeted at any authors. The comparison should be written as a method-family and threat-model comparison.
 
+## Reviewer Feedback To Address
+
+The revision is responding to three reviewers. Reviewer 1 is the strict reviewer; Reviewer 2 is mostly positive but asks for task/reference coverage; Reviewer 3 recommends minor revision and mainly asks for abstract style plus explicit PSNR/SSIM metric references.
+
+### Reviewer 1
+
+Main comments:
+
+- The framework is an engineering improvement over existing decoder-free obfuscation methods, but the paper positions it as groundbreaking. Tone down claims and clearly state what is incremental.
+- The reliance on `tanh` as the critical "non-invertibility" mechanism is weak. Stronger empirical adversarial benchmarks are needed, including MI-FGSM, L-BFGS, adversarial VAEs, and side-channel leakage. Formal proofs would strengthen the work, but current artifacts support an empirical framing rather than a proof.
+- The added CycleGAN experiments are useful, but broader and more realistic settings are needed: segmentation, medical imaging, high-resolution industrial datasets, and real-world deployment tests.
+- Expand coverage of recent works on secure/multimodal privacy-preserving ViTs and adversarial robustness literature.
+- The paper is long, verbose, and repetitive. Streamline and tighten writing.
+- The trusted obfuscator pool and Merkle attestations are not fully realistic for adversarial cloud settings. Clarify deployment assumptions and limitations.
+
+Additional questionnaire summary:
+
+- Contribution: yes, but only incrementally.
+- Technical soundness: partial. The implementation and experiments are detailed, but non-invertibility claims are heuristic.
+- Presentation: partial. The paper is lengthy and repetitive.
+- References: applicable and sufficient according to Reviewer 1.
+
+Response strategy:
+
+- Explicitly reframe the work as modular ViT-compatible engineering, not a fundamentally new cryptographic primitive.
+- Use the new adversarial artifact set: MI-FGSM, L-BFGS, adversarial VAE, CycleGAN, and side-channel leakage.
+- Avoid "guarantees irreversibility." Use "empirically resistant under tested attacks" and "does not expose a closed-form inverse."
+- Add the reversible permutation-family comparison to show the difference between visual obfuscation and exact recovery under known/chosen-plaintext settings.
+- Move unsupported formal-proof language to limitations.
+- Add deployment assumptions for Merkle/root signatures and obfuscator pools.
+- Shorten repetitive explanations in Introduction, Related Work, Security Analysis, and Experiments.
+
+### Reviewer 2
+
+Main comments:
+
+- The reviewer understands the contribution as a modular patch-level image obfuscation framework for privacy-preserving inference on untrusted third-party servers.
+- Positives: lightweight and efficient design, fast training/inference suitable for edge deployment, plug-and-play compatibility with frozen transformer backbones such as CLIP and GPT-4V, broad utility preservation across classification/OCR/detection, and security mechanisms such as Merkle attestation and randomized obfuscator scheduling.
+- Concerns: obfuscation strength vs. utility trade-off remains; stronger anonymization can degrade accuracy.
+- Concerns: limited task coverage; evaluation was mainly classification, OCR, and detection. Reviewer asks about segmentation and multimodal reasoning.
+- References were marked not sufficient, so add recent and directly relevant privacy-preserving ViT/multimodal works.
+
+Additional questionnaire summary:
+
+- Contribution: yes.
+- Technical soundness: yes.
+- Comprehensive presentation: yes.
+- References: no, needs expansion.
+
+Response strategy:
+
+- Add a trade-off paragraph explicitly discussing privacy strength vs. utility.
+- Add task-coverage results from `outputs/revision_v3/`: retrieval, object detection, industrial anomaly detection, and exploratory captioning/segmentation limitations.
+- Use claim gating: do not claim medical segmentation success because Dice/IoU are zero in the artifact.
+- Strengthen related work with secure/multimodal privacy-preserving ViTs, reversible image encryption for ViTs, and adversarial reconstruction/robustness literature.
+
+### Reviewer 3
+
+Main comments:
+
+- The reviewer believes the manuscript has potential for IEEE Access and says previous comments were addressed well.
+- Minor revision only.
+- Refine the abstract using formal style.
+- Include appropriate reference to evaluation metrics, specifically PSNR and SSIM.
+
+Additional questionnaire summary:
+
+- Contribution: yes.
+- Technical soundness: yes.
+- Comprehensive presentation: yes.
+- References: yes.
+
+Response strategy:
+
+- Rewrite the abstract first in a formal IEEE tone.
+- Mention PSNR and SSIM explicitly in the abstract and the obfuscation-quality/security sections.
+- Keep the abstract measured: utility, task coverage, and empirical reconstruction resistance without overclaiming formal guarantees.
+
+### Reviewer-Response Checklist
+
+Every final revision should be traceable to these checklist items:
+
+- Tone down novelty and claim incremental engineering integration with ViT-compatible embeddings.
+- Add/revise adversarial benchmark section with MI-FGSM, L-BFGS, adversarial VAE, CycleGAN, side-channel leakage, and reversible-family known/chosen-plaintext recovery.
+- Add task coverage: retrieval, OD, industrial anomaly detection; discuss segmentation/captioning as exploratory or limitations.
+- Expand references for privacy-preserving ViTs, multimodal privacy-preserving systems, adversarial robustness/reconstruction, and Kiya/Kinoshita/Horio reversible encryption baselines.
+- Streamline repetitive sections.
+- Clarify Merkle attestation and trusted obfuscator-pool assumptions.
+- Explicitly mention PSNR and SSIM in abstract and metric description.
+- Include a limitations section that says formal non-invertibility proof remains future work.
+
 ## Read First
 
 Start with these files:
