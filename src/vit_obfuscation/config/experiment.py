@@ -10,6 +10,7 @@ import yaml
 class ObfuscationConfig:
     patch_size: int = 14
     group_size: int = 100
+    apply_patch_permutation: bool = False
 
 
 @dataclass
@@ -22,7 +23,7 @@ class ModelConfig:
 
 @dataclass
 class EmbeddingTrainingConfig:
-    iterations: int = 5000
+    iterations: int = 1000
     learning_rate: float = 1e-2
     batch_size: int = 32
     training_dataset: str = "benjamin-paine/imagenet-1k-256x256"
@@ -30,7 +31,7 @@ class EmbeddingTrainingConfig:
 
 @dataclass
 class TaskTrainingConfig:
-    iterations: int = 1000
+    iterations: int = 300
     learning_rate: float = 1e-4
     batch_size: int = 256
 
@@ -41,6 +42,11 @@ class DatasetConfig:
     subset: str | None = None
     input_column: str = "image"
     label_column: str = "label"
+    text_column: str | None = None
+    mask_column: str | None = None
+    normal_column: str | None = None
+    id_column: str | None = None
+    normal_label: str | int | None = None
     train_split: str = "train"
     eval_split: str = "test"
     num_classes: int | None = None
@@ -51,6 +57,9 @@ class DatasetConfig:
 class EvaluationConfig:
     batch_size: int = 32
     with_obfuscation: bool = True
+    max_samples: int | None = None
+    max_new_tokens: int = 30
+    num_beams: int = 3
 
 
 @dataclass

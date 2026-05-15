@@ -13,22 +13,25 @@ def lbfgs_inversion_attack(
     max_iterations: int = 500,
     num_restarts: int = 3,
     lr: float = 0.1,
+    clip_min: float = -1.0,
+    clip_max: float = 1.0,
 ) -> torch.Tensor:
     """
     L-BFGS optimization attack: given obfuscated image Y, try to find X
     such that Obfuscate(X) ≈ Y.
 
     Uses multiple random restarts and returns the best reconstruction.
-    Should fail due to non-invertibility (tanh + permutations).
+    Should fail due to non-invertibility (tanh and optional permutations).
     """
     device = obfuscated_images.device
     B, C, H, W = obfuscated_images.shape
-    best_recon = torch.randn_like(obfuscated_images)
+    best_recon = torch.empty_like(obfuscated_images).uniform_(clip_min, clip_max)
     best_loss = float("inf")
 
     for restart in range(num_restarts):
         # Random initialization
-        x = torch.randn(B, C, H, W, device=device, requires_grad=True)
+        x = torch.empty(B, C, H, W, device=device).uniform_(clip_min, clip_max)
+        x.requires_grad_(True)
 
         optimizer = torch.optim.LBFGS(
             [x],
@@ -55,7 +58,7 @@ def lbfgs_inversion_attack(
             best_loss = final_loss
             best_recon = x.detach().clone()
 
-    return best_recon.clamp(-1, 1)
+    return best_recon.clamp(clip_min, clip_max)
 
 
 def _obfuscate_with_grad(
@@ -84,7 +87,18 @@ def _obfuscate_with_grad(
         torch.einsum("bcnp,cnpo->bcno", x_patched, selected_weights) + selected_biases
     )
 
-    x_out = obfuscated_patches.view(B, C, Nh, Nw, ps, ps)
+    if getattr(obfuscator, "apply_patch_permutation", False):
+        permuted_patches = torch.empty_like(obfuscated_patches)
+        for channel_idx in range(C):
+            permuted_patches[:, channel_idx] = obfuscated_patches[
+                :, channel_idx, obfuscator.patch_permutations[channel_idx]
+            ]
+    else:
+        permuted_patches = obfuscated_patches
+
+    x_out = permuted_patches.view(B, C, Nh, Nw, ps, ps)
     x_out = x_out.permute(0, 1, 2, 4, 3, 5).contiguous().view(B, C, H, W)
     x_out = x_out[:, obfuscator.channel_permutation]
-    return torch.tanh(x_out)
+    if getattr(obfuscator, "use_tanh", True):
+        return torch.tanh(x_out)
+    return x_out

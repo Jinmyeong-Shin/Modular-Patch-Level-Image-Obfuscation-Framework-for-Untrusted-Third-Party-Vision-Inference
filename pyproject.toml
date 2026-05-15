@@ -16,6 +16,7 @@ dependencies = [
     "scikit-learn",
     "torchmetrics",
     "pycocotools",
+    "medmnist",
     "tqdm",
     "pyyaml",
     "matplotlib",

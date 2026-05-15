@@ -123,3 +123,39 @@ class SegmentationEvalOutput(Output):
     overall_accuracy: Optional[float] = None
     per_category_iou: Optional[dict[str, float]] = None
     per_category_accuracy: Optional[dict[str, float]] = None
+
+
+@dataclass
+class RetrievalEvalOutput(Output):
+    recall_at_1: Optional[float] = None
+    recall_at_5: Optional[float] = None
+    recall_at_10: Optional[float] = None
+    map: Optional[float] = None
+    image_to_text_recall_at_1: Optional[float] = None
+    image_to_text_recall_at_5: Optional[float] = None
+    image_to_text_recall_at_10: Optional[float] = None
+    text_to_image_recall_at_1: Optional[float] = None
+    text_to_image_recall_at_5: Optional[float] = None
+    text_to_image_recall_at_10: Optional[float] = None
+
+
+@dataclass
+class AnomalyEvalOutput(Output):
+    image_auroc: Optional[float] = None
+    image_average_precision: Optional[float] = None
+    pixel_auroc: Optional[float] = None
+    pro_score: Optional[float] = None
+
+
+@dataclass
+class BinarySegmentationEvalOutput(Output):
+    dice: Optional[float] = None
+    iou: Optional[float] = None
+    pixel_accuracy: Optional[float] = None
+
+
+@dataclass
+class CaptioningEvalOutput(Output):
+    bleu1: Optional[float] = None
+    bleu4: Optional[float] = None
+    exact_match: Optional[float] = None

@@ -1,0 +1,405 @@
+{
+  "created_at_utc": "2026-05-15T10:25:14.862332+00:00",
+  "experiment": "permutation-family-key-recovery-comparison",
+  "task": "key_recovery_and_direct_obfuscation_quality_comparison",
+  "base_experiment": "vit-cifar10",
+  "image_size": [
+    224,
+    224
+  ],
+  "sample_counts": {
+    "eval": 8
+  },
+  "proposed_reference": {
+    "direct_obfuscated_quality": {
+      "ssim": 0.002188129350543022,
+      "psnr": 10.345759306035555,
+      "mse": 0.3693890869617462
+    },
+    "checkpoint": "outputs/revision_v3/checkpoints/google_vit-base-patch16-224_ps14_gs100_s42.pt",
+    "white_box_l_bfgs_note": "See adversarial-vit-cifar10_results.json for exact-secret optimization results; the proposed transform is not a lossless permutation and does not have a closed-form inverse."
+  },
+  "scheme_results": [
+    {
+      "scheme_id": "pixel_negative_channel_shuffle",
+      "label": "PE-style pixel negative/channel shuffle",
+      "mapped_papers": [
+        "sirichotedumrong2019pixel"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.007562856189906597,
+        "psnr": 8.405679475972116,
+        "mse": 0.5774202942848206
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "exact with known key; chosen plaintext can recover per-pixel signs/channel order",
+      "side_channel": {
+        "frequency_correlation": 0.003540963170583685,
+        "spatial_autocorrelation": 0.0208252976105238,
+        "histogram_kl_divergence": 0.23082361246148744,
+        "mutual_information": 1.035535216331482
+      }
+    },
+    {
+      "scheme_id": "etc_block_scramble",
+      "label": "EtC-style block scrambling",
+      "mapped_papers": [
+        "kawamura2020etc",
+        "maungmaung2022isotropic",
+        "qi2022convmixer_adaptive_permutation",
+        "hamano2023jpeg_etc_vit",
+        "lin2024convmixer"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.028103811666369438,
+        "psnr": 8.429888430211518,
+        "mse": 0.574210524559021
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "exact with known key; chosen plaintext can recover block/pixel/channel operations",
+      "side_channel": {
+        "frequency_correlation": 0.624351137628158,
+        "spatial_autocorrelation": 0.013124568378164744,
+        "histogram_kl_divergence": 0.24438726964096227,
+        "mutual_information": 0.017928216606378555
+      }
+    },
+    {
+      "scheme_id": "block_orthogonal_secret_key",
+      "label": "block-wise random orthogonal transform",
+      "mapped_papers": [
+        "aso2023random_orthogonal_convmixer"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.0009468463249504566,
+        "psnr": 8.318536975150106,
+        "mse": 0.5891234278678894
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "exact with known key; chosen plaintext basis probes can recover the orthogonal matrix",
+      "side_channel": {
+        "frequency_correlation": 0.003944941250665579,
+        "spatial_autocorrelation": -0.4342894358948494,
+        "histogram_kl_divergence": 0.48744258595009643,
+        "mutual_information": 0.05177119001746178
+      }
+    },
+    {
+      "scheme_id": "vit_block_pixel_permutation",
+      "label": "unrestricted ViT block+pixel permutation",
+      "mapped_papers": [
+        "qi2022vit",
+        "nagamori2023federated_vit",
+        "nagamori2024domain_adaptation",
+        "kiya2023reliable_vit"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.027878237888216972,
+        "psnr": 8.546760033668248,
+        "mse": 0.558964192867279
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "one unique calibration image recovers the global permutation when the same key is reused",
+      "side_channel": {
+        "frequency_correlation": 0.2241619365910689,
+        "spatial_autocorrelation": -0.013376543385675177,
+        "histogram_kl_divergence": 0.07270863888940464,
+        "mutual_information": 0.019003085792064667
+      }
+    },
+    {
+      "scheme_id": "patch_pixel_shuffle_only",
+      "label": "patch-local pixel permutation only",
+      "mapped_papers": [
+        "iijima2022convmixer_model_encryption",
+        "kiya2023image_model",
+        "kiya2022segmentation"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.14622274041175842,
+        "psnr": 13.630273204729646,
+        "mse": 0.17339344322681427
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "one unique calibration image recovers the in-patch permutation when the same key is reused",
+      "side_channel": {
+        "frequency_correlation": 0.13566995163758597,
+        "spatial_autocorrelation": 0.9744150713086128,
+        "histogram_kl_divergence": 0.07980378154510011,
+        "mutual_information": 0.4166741371154785
+      }
+    },
+    {
+      "scheme_id": "restricted_horio_high_accuracy",
+      "label": "Horio restricted setting Nbs=120,Nps=500",
+      "mapped_papers": [
+        "horio2024restricted"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.2653079032897949,
+        "psnr": 12.217585183477295,
+        "mse": 0.24004986882209778
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "one unique calibration image recovers the restricted permutation when the same key is reused",
+      "side_channel": {
+        "frequency_correlation": 0.32796861976385117,
+        "spatial_autocorrelation": 0.6254794523119926,
+        "histogram_kl_divergence": 0.012049917694336424,
+        "mutual_information": 1.0959147214889526
+      }
+    },
+    {
+      "scheme_id": "restricted_per_image_permutation",
+      "label": "restricted per-image/key permutation example Nbs=147,Nps=576",
+      "mapped_papers": [
+        "aso2024disposable",
+        "hirose2025no_key_management"
+      ],
+      "direct_obfuscated_quality": {
+        "ssim": 0.39560219645500183,
+        "psnr": 13.99525837151586,
+        "mse": 0.1594168245792389
+      },
+      "exact_key_or_chosen_plaintext_recovery": {
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      },
+      "key_recovery_note": "exact per target key; per-image disposable keys prevent reuse but not per-image key compromise",
+      "side_channel": {
+        "frequency_correlation": 0.3875606705745061,
+        "spatial_autocorrelation": 0.7687493190169334,
+        "histogram_kl_divergence": 0.007094071198177214,
+        "mutual_information": 1.7305876016616821
+      }
+    }
+  ],
+  "paper_targets": [
+    {
+      "key": "sirichotedumrong2019pixel",
+      "title": "Pixel-Based Image Encryption without Key Management for Privacy-Preserving Deep Neural Networks",
+      "authors": "Sirichotedumrong, Kinoshita, and Kiya",
+      "year": 2019,
+      "source_url": "https://doi.org/10.1109/ACCESS.2019.2959017",
+      "scheme_id": "pixel_negative_channel_shuffle",
+      "notes": "Pixel-wise negative-positive transformation and color-component shuffling family."
+    },
+    {
+      "key": "kawamura2020etc",
+      "title": "A Privacy-Preserving Machine Learning Scheme Using EtC Images",
+      "authors": "Kawamura, Kinoshita, Nakachi, Shiota, and Kiya",
+      "year": 2020,
+      "source_url": "https://doi.org/10.1587/transfun.2020SMP0022",
+      "scheme_id": "etc_block_scramble",
+      "notes": "Encryption-then-compression block scrambling family."
+    },
+    {
+      "key": "maungmaung2022isotropic",
+      "title": "Privacy-Preserving Image Classification Using an Isotropic Network",
+      "authors": "MaungMaung and Kiya",
+      "year": 2022,
+      "source_url": "https://arxiv.org/abs/2204.07707",
+      "scheme_id": "etc_block_scramble",
+      "notes": "EtC/block-wise encryption applied to isotropic networks such as ViT and ConvMixer."
+    },
+    {
+      "key": "qi2022convmixer_adaptive_permutation",
+      "title": "Privacy-Preserving Image Classification Using ConvMixer with Adaptive Permutation Matrix",
+      "authors": "Qi, MaungMaung, and Kiya",
+      "year": 2022,
+      "source_url": "https://arxiv.org/abs/2208.02556",
+      "scheme_id": "etc_block_scramble",
+      "notes": "ConvMixer adaptation of block-wise scrambled image encryption with an adaptive permutation matrix."
+    },
+    {
+      "key": "iijima2022convmixer_model_encryption",
+      "title": "An Encryption Method of ConvMixer Models without Performance Degradation",
+      "authors": "Iijima and Kiya",
+      "year": 2022,
+      "source_url": "https://arxiv.org/abs/2207.11939",
+      "scheme_id": "patch_pixel_shuffle_only",
+      "notes": "Secret-key image/model transformation for ConvMixer; image-side transform is reversible under the key."
+    },
+    {
+      "key": "qi2022vit",
+      "title": "Privacy-Preserving Image Classification Using Vision Transformer",
+      "authors": "Qi, MaungMaung, Kinoshita, and Kiya",
+      "year": 2022,
+      "source_url": "https://arxiv.org/abs/2205.12041",
+      "scheme_id": "vit_block_pixel_permutation",
+      "notes": "Block scrambling plus in-block pixel-position shuffling for ViT-B/16."
+    },
+    {
+      "key": "kiya2023image_model",
+      "title": "Image and Model Transformation with Secret Key for Vision Transformer",
+      "authors": "Kiya, Iijima, MaungMaung, and Kinoshita",
+      "year": 2023,
+      "source_url": "https://doi.org/10.1587/transinf.2022MUI0001",
+      "scheme_id": "patch_pixel_shuffle_only",
+      "notes": "Secret-key model/image transformation; image-side operation is patch-level pixel shuffling."
+    },
+    {
+      "key": "kiya2022segmentation",
+      "title": "Privacy-Preserving Semantic Segmentation Using Vision Transformer",
+      "authors": "Kiya, Nagamori, Imaizumi, and Shiota",
+      "year": 2022,
+      "source_url": "https://www.mdpi.com/2313-433X/8/9/233",
+      "scheme_id": "patch_pixel_shuffle_only",
+      "notes": "SETR-compatible patch pixel shuffling; preserves patch positions for dense prediction."
+    },
+    {
+      "key": "hamano2023jpeg_etc_vit",
+      "title": "Effects of JPEG Compression on Vision Transformer Image Classification for Encryption-then-Compression Images",
+      "authors": "Hamano, Imaizumi, and Kiya",
+      "year": 2023,
+      "source_url": "https://www.mdpi.com/1424-8220/23/7/3400",
+      "scheme_id": "etc_block_scramble",
+      "notes": "Studies JPEG-compressed EtC images for ViT classification; image transform remains reversible before compression."
+    },
+    {
+      "key": "aso2023random_orthogonal_convmixer",
+      "title": "A Privacy Preserving Method with a Random Orthogonal Matrix for ConvMixer Models",
+      "authors": "Aso, Chuman, and Kiya",
+      "year": 2023,
+      "source_url": "https://arxiv.org/abs/2301.03843",
+      "scheme_id": "block_orthogonal_secret_key",
+      "notes": "Block-wise random orthogonal matrix transform; included as a reversible linear-key baseline, not a pure permutation."
+    },
+    {
+      "key": "nagamori2023federated_vit",
+      "title": "Combined Use of Federated Learning and Image Encryption for Privacy-Preserving Image Classification with Vision Transformer",
+      "authors": "Nagamori and Kiya",
+      "year": 2023,
+      "source_url": "https://arxiv.org/abs/2301.09255",
+      "scheme_id": "vit_block_pixel_permutation",
+      "notes": "Federated-learning setting using the same reversible ViT-oriented image encryption family."
+    },
+    {
+      "key": "nagamori2024domain_adaptation",
+      "title": "Efficient Fine-Tuning with Domain Adaptation for Privacy-Preserving Vision Transformer",
+      "authors": "Nagamori, Shiota, and Kiya",
+      "year": 2024,
+      "source_url": "https://arxiv.org/abs/2401.05126",
+      "scheme_id": "vit_block_pixel_permutation",
+      "notes": "Same block scrambling plus pixel shuffling, with domain adaptation for utility."
+    },
+    {
+      "key": "kiya2023reliable_vit",
+      "title": "Block-Wise Encryption for Reliable Vision Transformer Models",
+      "authors": "Kiya, Iijima, and Nagamori",
+      "year": 2023,
+      "source_url": "https://arxiv.org/abs/2308.07612",
+      "scheme_id": "vit_block_pixel_permutation",
+      "notes": "Survey/application paper around block-wise encryption for ViT models."
+    },
+    {
+      "key": "aso2024disposable",
+      "title": "Disposable-key-based Image Encryption for Collaborative Learning of Vision Transformer",
+      "authors": "Aso, Shiota, and Kiya",
+      "year": 2024,
+      "source_url": "https://arxiv.org/abs/2408.05737",
+      "scheme_id": "restricted_per_image_permutation",
+      "notes": "Restricted random block/pixel permutation matrices with independent keys per image/client."
+    },
+    {
+      "key": "horio2024restricted",
+      "title": "Privacy-Preserving Vision Transformer Using Images Encrypted with Restricted Random Permutation Matrices",
+      "authors": "Horio, Nishikawa, and Kiya",
+      "year": 2024,
+      "source_url": "https://arxiv.org/abs/2408.08529",
+      "scheme_id": "restricted_horio_high_accuracy",
+      "notes": "Restricted block and pixel random permutation matrices."
+    },
+    {
+      "key": "hirose2025no_key_management",
+      "title": "Learnable Image Encryption Without Key Management for Privacy-Preserving Vision Transformer",
+      "authors": "Hirose, Imaizumi, and Kiya",
+      "year": 2025,
+      "source_url": "https://doi.org/10.1109/ACCESS.2025.3635235",
+      "scheme_id": "restricted_per_image_permutation",
+      "notes": "Independent per-client/per-image key family; calibration must match the target key."
+    },
+    {
+      "key": "lin2024convmixer",
+      "title": "Privacy-Preserving ConvMixer Without Any Accuracy Degradation Using Compressible Encrypted Images",
+      "authors": "Lin, Imaizumi, and Kiya",
+      "year": 2024,
+      "source_url": "https://www.mdpi.com/2078-2489/15/11/723",
+      "scheme_id": "etc_block_scramble",
+      "notes": "Compressible encrypted image family adapted for ConvMixer."
+    }
+  ],
+  "reported_other_attack_numbers": {
+    "qi2022vit_ssim_values_from_figure": {
+      "source_url": "https://arxiv.org/abs/2205.12041",
+      "metric": "SSIM; higher means more visual recovery",
+      "rows": {
+        "LE": {
+          "encrypted": 0.006,
+          "FR_attack": 0.017,
+          "GAN_attack": 0.774,
+          "ITN_attack": 0.407
+        },
+        "EtC": {
+          "encrypted": 0.001,
+          "FR_attack": 0.01,
+          "GAN_attack": 0.031,
+          "ITN_attack": 0.529
+        },
+        "ELE": {
+          "encrypted": 0.061,
+          "FR_attack": 0.001,
+          "GAN_attack": 0.021,
+          "ITN_attack": 0.001
+        },
+        "PE": {
+          "encrypted": 0.001,
+          "FR_attack": 0.001,
+          "GAN_attack": 0.01,
+          "ITN_attack": 0.086
+        },
+        "ViT_block_pixel_permutation": {
+          "encrypted": 0.123,
+          "FR_attack": 0.035,
+          "GAN_attack": 0.043,
+          "ITN_attack": 0.117
+        }
+      }
+    },
+    "chuman2023_jigsaw_attack": {
+      "source_url": "https://www.mdpi.com/2078-2489/14/6/311",
+      "note": "Reports that a jigsaw-puzzle-based ciphertext-only attack can restore almost all visual information from ViT-oriented block-scrambling/pixel-shuffling encrypted images."
+    }
+  },
+  "interpretation": [
+    "All listed permutation/negative-positive/channel-shuffle families are deterministic reversible transforms. With the correct key, reconstruction is exact; with reused pure permutation keys, a chosen calibration image can recover the inverse permutation.",
+    "Per-image or disposable-key variants reduce cross-image key reuse, but the protected image for a compromised or calibrated key remains exactly recoverable.",
+    "Direct obfuscated-image quality should be reported separately from known-key/chosen-plaintext recovery because ciphertext-only visual quality can look low while exact-key failure remains total."
+  ],
+  "figure": "outputs/revision_v3/figures/permutation-family-key-recovery-comparison_grid.png"
+}

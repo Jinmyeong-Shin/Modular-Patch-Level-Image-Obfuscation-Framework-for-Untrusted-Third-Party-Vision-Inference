@@ -10,8 +10,9 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
 
     Steps:
     1. Patch-wise linear transformation (unique per spatial position, cycling through group_size kernels)
-    2. Channel permutation
-    3. Tanh activation to bound output to [-1, 1]
+    2. Optional per-channel patch permutation
+    3. Channel permutation
+    4. Tanh activation to bound output to [-1, 1]
     """
 
     def __init__(
@@ -21,6 +22,7 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
         patch_size: int,
         group_size: int,
         use_tanh: bool = True,
+        apply_patch_permutation: bool = False,
     ) -> None:
         super().__init__()
 
@@ -38,6 +40,7 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
         self.patch_size = patch_size
         self.group_size = group_size
         self.use_tanh = use_tanh
+        self.apply_patch_permutation = apply_patch_permutation
 
         H, W = self.image_size
         num_patches = (H // patch_size) * (W // patch_size)
@@ -113,8 +116,20 @@ class ChannelWisePatchLevelObfuscator(nn.Module):
             + selected_biases
         )
 
+        # The original PoC generated patch permutations but did not apply them.
+        # Keep that behavior by default because the learned deobfuscation embedding
+        # assumes local spatial correspondence between input and ViT patch grids.
+        if self.apply_patch_permutation:
+            permuted_patches = torch.empty_like(obfuscated_patches)
+            for channel_idx in range(C):
+                permuted_patches[:, channel_idx] = obfuscated_patches[
+                    :, channel_idx, self.patch_permutations[channel_idx]
+                ]
+        else:
+            permuted_patches = obfuscated_patches
+
         # Reshape back to image
-        x_out = obfuscated_patches.view(B, C, Nh, Nw, ps, ps)
+        x_out = permuted_patches.view(B, C, Nh, Nw, ps, ps)
         x_out = x_out.permute(0, 1, 2, 4, 3, 5).contiguous().view(B, C, H, W)
 
         # Channel permutation

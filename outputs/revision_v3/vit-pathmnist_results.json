@@ -1,0 +1,17 @@
+{
+  "experiment": "vit-pathmnist",
+  "model": "google/vit-base-patch16-224",
+  "task": "classification",
+  "clean": {
+    "accuracy": 0.9427576601671309,
+    "recall": 0.925306046906523,
+    "precision": 0.9187405899439691,
+    "f1": 0.9218454451101654
+  },
+  "obfuscated": {
+    "accuracy": 0.9373259052924791,
+    "recall": 0.9181272014058527,
+    "precision": 0.9101191396980273,
+    "f1": 0.9123120592200675
+  }
+}

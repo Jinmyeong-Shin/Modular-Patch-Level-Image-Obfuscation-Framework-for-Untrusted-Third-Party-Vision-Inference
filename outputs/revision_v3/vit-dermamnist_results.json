@@ -1,0 +1,17 @@
+{
+  "experiment": "vit-dermamnist",
+  "model": "google/vit-base-patch16-224",
+  "task": "classification",
+  "clean": {
+    "accuracy": 0.8024937655860349,
+    "recall": 0.6227986467500145,
+    "precision": 0.6951225398111023,
+    "f1": 0.6501396360640602
+  },
+  "obfuscated": {
+    "accuracy": 0.7805486284289277,
+    "recall": 0.5931304871346565,
+    "precision": 0.6554355835037,
+    "f1": 0.6183694912299199
+  }
+}

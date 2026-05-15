@@ -4,6 +4,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from ..obfuscation.obfuscator import ChannelWisePatchLevelObfuscator
+from .lbfgs_inversion import _obfuscate_with_grad
+
 
 class SimpleUNet(nn.Module):
     """Lightweight U-Net for image reconstruction."""
@@ -84,43 +87,60 @@ def train_reconstruction_model(
 
 
 def mi_fgsm_attack(
-    reconstruction_model: SimpleUNet,
+    obfuscator: ChannelWisePatchLevelObfuscator,
     obfuscated_images: torch.Tensor,
     iterations: int = 100,
     step_size: float = 0.01,
     momentum: float = 1.0,
+    num_restarts: int = 3,
+    clip_min: float = -1.0,
+    clip_max: float = 1.0,
 ) -> torch.Tensor:
     """
-    MI-FGSM attack: use momentum-based gradient to iteratively refine
-    reconstruction from the trained U-Net.
+    MI-FGSM inversion attack: optimize candidate clean images so that their
+    obfuscated outputs match the observed obfuscated images.
 
-    Returns the best reconstruction the attacker can produce.
+    Returns the best candidate image found across random restarts.
     """
-    reconstruction_model.eval()
+    best_recon = torch.empty_like(obfuscated_images).uniform_(clip_min, clip_max)
+    best_loss = torch.full(
+        (obfuscated_images.shape[0],), float("inf"), device=obfuscated_images.device
+    )
 
-    # Start from the U-Net's direct reconstruction
-    with torch.no_grad():
-        initial_recon = reconstruction_model(obfuscated_images)
+    for _ in range(num_restarts):
+        candidate = torch.empty_like(obfuscated_images).uniform_(clip_min, clip_max)
+        candidate.requires_grad_(True)
+        grad_momentum = torch.zeros_like(candidate)
 
-    x_adv = initial_recon.clone().detach().requires_grad_(True)
-    grad_momentum = torch.zeros_like(x_adv)
+        for _ in range(iterations):
+            if candidate.grad is not None:
+                candidate.grad.zero_()
 
-    for _ in range(iterations):
-        if x_adv.grad is not None:
-            x_adv.grad.zero_()
+            predicted = _obfuscate_with_grad(obfuscator, candidate)
+            per_image_loss = F.mse_loss(
+                predicted, obfuscated_images, reduction="none"
+            ).mean(dim=(1, 2, 3))
+            loss = per_image_loss.sum()
+            loss.backward()
 
-        # The attacker tries to find an image that, when fed through the
-        # reconstruction model's encoder features, matches the obfuscated input
-        recon = reconstruction_model(obfuscated_images)
-        loss = F.mse_loss(x_adv, recon)
-        loss.backward()
+            with torch.no_grad():
+                grad = candidate.grad
+                grad_norm = grad / (
+                    grad.abs().mean(dim=(1, 2, 3), keepdim=True) + 1e-8
+                )
+                grad_momentum = momentum * grad_momentum + grad_norm
+                candidate = candidate - step_size * grad_momentum.sign()
+                candidate = (
+                    candidate.clamp(clip_min, clip_max).detach().requires_grad_(True)
+                )
 
         with torch.no_grad():
-            grad = x_adv.grad
-            grad_norm = grad / (grad.abs().mean(dim=[1, 2, 3], keepdim=True) + 1e-8)
-            grad_momentum = momentum * grad_momentum + grad_norm
-            x_adv = x_adv - step_size * grad_momentum.sign()
-            x_adv = x_adv.clamp(-1, 1)
-            x_adv = x_adv.detach().requires_grad_(True)
+            final = _obfuscate_with_grad(obfuscator, candidate)
+            per_image_loss = F.mse_loss(
+                final, obfuscated_images, reduction="none"
+            ).mean(dim=(1, 2, 3))
+            improved = per_image_loss < best_loss
+            best_loss[improved] = per_image_loss[improved]
+            best_recon[improved] = candidate.detach()[improved]
 
-    return x_adv.detach()
+    return best_recon.detach()

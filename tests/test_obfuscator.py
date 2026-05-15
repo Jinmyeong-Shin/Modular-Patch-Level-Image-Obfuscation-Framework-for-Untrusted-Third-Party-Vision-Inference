@@ -74,10 +74,53 @@ def test_obfuscator_non_square():
     assert out.shape == x.shape
 
 
+def test_obfuscator_does_not_apply_patch_permutation_by_default():
+    """Default behavior should match the old PoC: patch permutations are inert."""
+    obfuscator = ChannelWisePatchLevelObfuscator(
+        image_size=(1, 4),
+        num_channels=1,
+        patch_size=1,
+        group_size=1,
+        use_tanh=False,
+    )
+    obfuscator.obfuscation_weights.fill_(1.0)
+    obfuscator.obfuscation_biases.zero_()
+    obfuscator.patch_permutations[0] = torch.tensor([3, 2, 1, 0])
+    obfuscator.channel_permutation[0] = 0
+
+    x = torch.tensor([[[[0.0, 1.0, 2.0, 3.0]]]])
+    out = obfuscator(x)
+
+    assert torch.equal(out, x)
+
+
+def test_obfuscator_applies_patch_permutation_when_enabled():
+    """Patch permutations should move transformed patches only when enabled."""
+    obfuscator = ChannelWisePatchLevelObfuscator(
+        image_size=(1, 4),
+        num_channels=1,
+        patch_size=1,
+        group_size=1,
+        use_tanh=False,
+        apply_patch_permutation=True,
+    )
+    obfuscator.obfuscation_weights.fill_(1.0)
+    obfuscator.obfuscation_biases.zero_()
+    obfuscator.patch_permutations[0] = torch.tensor([3, 2, 1, 0])
+    obfuscator.channel_permutation[0] = 0
+
+    x = torch.tensor([[[[0.0, 1.0, 2.0, 3.0]]]])
+    out = obfuscator(x)
+
+    assert torch.equal(out, torch.tensor([[[[3.0, 2.0, 1.0, 0.0]]]]))
+
+
 if __name__ == "__main__":
     test_obfuscator_output_shape()
     test_obfuscator_output_bounded()
     test_obfuscator_deterministic()
     test_obfuscator_different_inputs()
     test_obfuscator_non_square()
+    test_obfuscator_does_not_apply_patch_permutation_by_default()
+    test_obfuscator_applies_patch_permutation_when_enabled()
     print("All obfuscator tests passed!")

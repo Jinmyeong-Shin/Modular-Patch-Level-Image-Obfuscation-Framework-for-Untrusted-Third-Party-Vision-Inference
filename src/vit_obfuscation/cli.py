@@ -38,7 +38,10 @@ def main():
         help="Directory containing experiment YAML configs",
     )
     all_parser.add_argument(
-        "--output-dir", "-o", default="./outputs", help="Output directory"
+        "--output-dir",
+        "-o",
+        default="./outputs/revision_v3",
+        help="Output directory",
     )
     all_parser.add_argument(
         "--verbose", "-v", action="store_true", help="Verbose logging"

@@ -1,0 +1,31 @@
+name: blip-flickr30k-captioning
+description: BLIP image captioning on Flickr30k with obfuscated visual inputs
+
+model:
+  hf_model_name_or_path: Salesforce/blip-image-captioning-base
+  task: image_captioning
+
+obfuscation:
+  patch_size: 16
+  group_size: 100
+
+embedding_training:
+  iterations: 300
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: AnyModal/flickr30k
+  input_column: image
+  text_column: alt_text
+  label_column: alt_text
+  train_split: train
+  eval_split: train[:200]
+
+evaluation:
+  batch_size: 16
+  max_samples: 200
+  max_new_tokens: 30
+  num_beams: 3
+
+seed: 42

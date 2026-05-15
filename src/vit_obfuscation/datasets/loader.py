@@ -1,7 +1,72 @@
 from __future__ import annotations
 
+import importlib.util
+import sys
+from pathlib import Path
+
 import datasets
 from PIL import Image
+
+
+DATASET_REPO_MAPPINGS = {
+    "scene_parse_150": "zhoubolei/scene_parse_150",
+}
+
+
+def _resolve_hf_dataset_name(hf_dataset_name_or_path: str) -> str:
+    return DATASET_REPO_MAPPINGS.get(hf_dataset_name_or_path, hf_dataset_name_or_path)
+
+
+def _load_dataset_with_local_script(
+    repo_id: str, split: str, subset: str | None = None
+) -> datasets.Dataset:
+    try:
+        from huggingface_hub import hf_hub_download
+    except ImportError as error:
+        raise ImportError(
+            "huggingface_hub is required to load dataset scripts for fallback datasets"
+        ) from error
+
+    script_filename = f"{Path(repo_id).name}.py"
+    script_path = hf_hub_download(
+        repo_id=repo_id, filename=script_filename, repo_type="dataset"
+    )
+    spec = importlib.util.spec_from_file_location(
+        f"hf_dataset_script_{Path(repo_id).name}", script_path
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+
+    builder_cls = getattr(module, "SceneParse150", None)
+    if builder_cls is None:
+        raise RuntimeError(f"Unable to import dataset builder from {script_path}")
+
+    builder = builder_cls(name=subset) if subset is not None else builder_cls()
+    builder.download_and_prepare()
+    return builder.as_dataset(split=split)
+
+
+def _load_dataset(
+    hf_dataset_name_or_path: str,
+    subset: str | None,
+    split: str,
+) -> datasets.Dataset:
+    resolved_name = _resolve_hf_dataset_name(hf_dataset_name_or_path)
+    try:
+        if subset is not None:
+            return datasets.load_dataset(resolved_name, name=subset, split=split)
+        return datasets.load_dataset(resolved_name, split=split)
+    except RuntimeError as exc:
+        if (
+            "Dataset scripts are no longer supported" in str(exc)
+            and resolved_name == DATASET_REPO_MAPPINGS.get("scene_parse_150")
+        ):
+            return _load_dataset_with_local_script(
+                resolved_name, split=split, subset=subset
+            )
+        raise
 
 
 def _ensure_rgb(example: dict, input_column: str) -> dict:
@@ -95,11 +160,11 @@ def load_classification_dataset(
         train_dataset = _load_medmnist_as_hf(subset, train_split, input_column, "label")
         eval_dataset = _load_medmnist_as_hf(subset, eval_split, input_column, "label")
     else:
-        train_dataset = datasets.load_dataset(
-            hf_dataset_name_or_path, name=subset, split=train_split
+        train_dataset = _load_dataset(
+            hf_dataset_name_or_path, subset=subset, split=train_split
         )
-        eval_dataset = datasets.load_dataset(
-            hf_dataset_name_or_path, name=subset, split=eval_split
+        eval_dataset = _load_dataset(
+            hf_dataset_name_or_path, subset=subset, split=eval_split
         )
 
     train_dataset.set_transform(lambda ex: _ensure_rgb(ex, input_column))
@@ -123,13 +188,13 @@ def load_detection_dataset(
         ex = _reformat_detection_labels(ex, label_column)
         return ex
 
-    train_dataset = datasets.load_dataset(
-        hf_dataset_name_or_path, name=subset, split=train_split
+    train_dataset = _load_dataset(
+        hf_dataset_name_or_path, subset=subset, split=train_split
     )
     train_dataset.set_transform(transform)
 
-    eval_dataset = datasets.load_dataset(
-        hf_dataset_name_or_path, name=subset, split=eval_split
+    eval_dataset = _load_dataset(
+        hf_dataset_name_or_path, subset=subset, split=eval_split
     )
     eval_dataset.set_transform(transform)
 

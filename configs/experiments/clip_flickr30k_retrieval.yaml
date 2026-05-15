@@ -1,0 +1,29 @@
+name: clip-flickr30k-retrieval
+description: CLIP image-text retrieval on Flickr30k
+
+model:
+  hf_model_name_or_path: openai/clip-vit-base-patch32
+  task: image_text_retrieval
+
+obfuscation:
+  patch_size: 32
+  group_size: 100
+
+embedding_training:
+  iterations: 1000
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: AnyModal/flickr30k
+  input_column: image
+  text_column: alt_text
+  label_column: alt_text
+  train_split: train
+  eval_split: train[:200]
+
+evaluation:
+  batch_size: 64
+  max_samples: 200
+
+seed: 42

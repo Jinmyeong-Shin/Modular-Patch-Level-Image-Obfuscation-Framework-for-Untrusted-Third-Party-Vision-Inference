@@ -1,0 +1,28 @@
+name: clip-image-retrieval-cifar10
+description: CLIP image-image retrieval on CIFAR-10 label relevance
+
+model:
+  hf_model_name_or_path: openai/clip-vit-base-patch32
+  task: image_retrieval
+
+obfuscation:
+  patch_size: 32
+  group_size: 100
+
+embedding_training:
+  iterations: 1000
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: cifar10
+  input_column: img
+  label_column: label
+  train_split: train
+  eval_split: test
+
+evaluation:
+  batch_size: 128
+  max_samples: 2000
+
+seed: 42

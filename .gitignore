@@ -211,6 +211,8 @@ __marimo__/
 
 # Large checkpoint files
 outputs/checkpoints/*.pt
+outputs/revision_v3/checkpoints/*.pt
+outputs/revision_v3/task_checkpoints/*.pt
 
 # Temporary log files
 experiment_log.txt

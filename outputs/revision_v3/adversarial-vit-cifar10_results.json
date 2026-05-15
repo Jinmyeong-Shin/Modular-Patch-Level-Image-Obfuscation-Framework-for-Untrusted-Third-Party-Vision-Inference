@@ -1,0 +1,63 @@
+{
+  "created_at_utc": "2026-05-15T09:19:22.481508+00:00",
+  "experiment": "adversarial-vit-cifar10",
+  "base_experiment": "vit-cifar10",
+  "model": "google/vit-base-patch16-224",
+  "task": "adversarial_reconstruction",
+  "checkpoint": "outputs/revision_v3/checkpoints/google_vit-base-patch16-224_ps14_gs100_s42.pt",
+  "tensor_domain": "rgb_resized_to_model_input_and_scaled_to_minus1_plus1",
+  "image_size": [
+    224,
+    224
+  ],
+  "sample_counts": {
+    "eval": 8,
+    "attack_train": 32
+  },
+  "attack_config": {
+    "mi_steps": 60,
+    "lbfgs_iterations": 80,
+    "lbfgs_restarts": 2,
+    "vae_epochs": 8,
+    "cyclegan_epochs": 3
+  },
+  "attacks": [
+    {
+      "attack": "obfuscated (no attack)",
+      "ssim": 0.002188129350543022,
+      "psnr": 10.345759306035555,
+      "mse": 0.3693890869617462
+    },
+    {
+      "attack": "MI-FGSM",
+      "ssim": 0.11923711746931076,
+      "psnr": 11.502806564834472,
+      "mse": 0.2829953730106354
+    },
+    {
+      "attack": "L-BFGS",
+      "ssim": 0.4598439335823059,
+      "psnr": 17.925238785144572,
+      "mse": 0.0644964948296547
+    },
+    {
+      "attack": "Adversarial VAE",
+      "ssim": 0.06555263698101044,
+      "psnr": 11.605760414093355,
+      "mse": 0.27636557817459106
+    },
+    {
+      "attack": "CycleGAN",
+      "ssim": 0.04378101974725723,
+      "psnr": 10.403032858903527,
+      "mse": 0.3645496666431427
+    }
+  ],
+  "side_channel": {
+    "frequency_correlation": 0.0018637362257625985,
+    "spatial_autocorrelation": -0.1885248750137786,
+    "histogram_kl_divergence": 2.0183517721792064,
+    "mutual_information": 0.04073020815849304
+  },
+  "figure": "outputs/revision_v3/figures/adversarial-vit-cifar10_grid.png"
+}

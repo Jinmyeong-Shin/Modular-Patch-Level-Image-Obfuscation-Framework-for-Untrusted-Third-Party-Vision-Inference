@@ -1,0 +1,272 @@
+[
+  {
+    "experiment": "vit-cifar10",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.9858,
+      "recall": 0.9857999999999999,
+      "precision": 0.9858315088314484,
+      "f1": 0.9858037998501767
+    },
+    "obfuscated": {
+      "accuracy": 0.9854,
+      "recall": 0.9853999999999999,
+      "precision": 0.9854217941489442,
+      "f1": 0.9854024413639756
+    }
+  },
+  {
+    "experiment": "vit-cifar100",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.9176,
+      "recall": 0.9175999999999999,
+      "precision": 0.9187401395096825,
+      "f1": 0.9175219646960119
+    },
+    "obfuscated": {
+      "accuracy": 0.9133,
+      "recall": 0.9133000000000001,
+      "precision": 0.9143362173833954,
+      "f1": 0.9131560191106769
+    }
+  },
+  {
+    "experiment": "vit-pathmnist",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.9427576601671309,
+      "recall": 0.925306046906523,
+      "precision": 0.9187405899439691,
+      "f1": 0.9218454451101654
+    },
+    "obfuscated": {
+      "accuracy": 0.9373259052924791,
+      "recall": 0.9181272014058527,
+      "precision": 0.9101191396980273,
+      "f1": 0.9123120592200675
+    }
+  },
+  {
+    "experiment": "vit-dermamnist",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.8024937655860349,
+      "recall": 0.6227986467500145,
+      "precision": 0.6951225398111023,
+      "f1": 0.6501396360640602
+    },
+    "obfuscated": {
+      "accuracy": 0.7805486284289277,
+      "recall": 0.5931304871346565,
+      "precision": 0.6554355835037,
+      "f1": 0.6183694912299199
+    }
+  },
+  {
+    "experiment": "vit-bloodmnist",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.9798304589301374,
+      "recall": 0.9798242052957566,
+      "precision": 0.9779623402059898,
+      "f1": 0.9788389865805474
+    },
+    "obfuscated": {
+      "accuracy": 0.9625840397544577,
+      "recall": 0.9563271361640233,
+      "precision": 0.9623037165955834,
+      "f1": 0.9580784745622992
+    }
+  },
+  {
+    "experiment": "vit-imagenet",
+    "model": "google/vit-base-patch16-224",
+    "task": "classification",
+    "clean": {
+      "accuracy": 0.7126,
+      "recall": 0.7125999999999999,
+      "precision": 0.7503278284961507,
+      "f1": 0.695019273456709
+    },
+    "obfuscated": {
+      "accuracy": 0.65856,
+      "recall": 0.6585599999999999,
+      "precision": 0.7100365142415083,
+      "f1": 0.6420756345714401
+    }
+  },
+  {
+    "experiment": "clip-zero-shot-cifar10",
+    "model": "openai/clip-vit-base-patch32",
+    "task": "zero_shot_classification",
+    "clean": {
+      "accuracy": 0.8738,
+      "recall": 0.8738000000000001,
+      "precision": 0.8812542565184481,
+      "f1": 0.8736611793944677
+    },
+    "obfuscated": {
+      "accuracy": 0.85,
+      "recall": 0.85,
+      "precision": 0.864394687068039,
+      "f1": 0.8486449812065512
+    }
+  },
+  {
+    "experiment": "mvtec-anomaly",
+    "model": "openai/clip-vit-base-patch32",
+    "task": "anomaly_detection",
+    "clean": {
+      "image_auroc": 1.0,
+      "image_average_precision": 1.0,
+      "pixel_auroc": 0.9693713055205475,
+      "pro_score": 0.826711987792904
+    },
+    "obfuscated": {
+      "image_auroc": 0.716796875,
+      "image_average_precision": 0.7086071243378921,
+      "pixel_auroc": 0.9413642932421595,
+      "pro_score": 0.6930587221441449
+    }
+  },
+  {
+    "experiment": "clip-image-retrieval-cifar10",
+    "model": "openai/clip-vit-base-patch32",
+    "task": "image_retrieval",
+    "clean": {
+      "recall_at_1": 0.887,
+      "recall_at_5": 0.9745,
+      "recall_at_10": 0.99,
+      "map": 0.6307507458918461
+    },
+    "obfuscated": {
+      "recall_at_1": 0.881,
+      "recall_at_5": 0.9735,
+      "recall_at_10": 0.9885,
+      "map": 0.6288971114215388
+    }
+  },
+  {
+    "experiment": "clip-flickr30k-retrieval",
+    "model": "openai/clip-vit-base-patch32",
+    "task": "image_text_retrieval",
+    "clean": {
+      "image_to_text_recall_at_1": 0.84,
+      "image_to_text_recall_at_5": 0.975,
+      "image_to_text_recall_at_10": 0.975,
+      "text_to_image_recall_at_1": 0.795,
+      "text_to_image_recall_at_5": 0.96,
+      "text_to_image_recall_at_10": 0.99
+    },
+    "obfuscated": {
+      "image_to_text_recall_at_1": 0.81,
+      "image_to_text_recall_at_5": 0.965,
+      "image_to_text_recall_at_10": 0.98,
+      "text_to_image_recall_at_1": 0.77,
+      "text_to_image_recall_at_5": 0.945,
+      "text_to_image_recall_at_10": 0.98
+    }
+  },
+  {
+    "experiment": "medical-minimsd-segmentation",
+    "model": "google/vit-base-patch16-224",
+    "task": "medical_segmentation",
+    "clean": {
+      "dice": 0.0,
+      "iou": 0.0,
+      "pixel_accuracy": 0.9961528033018112
+    },
+    "obfuscated": {
+      "dice": 0.0,
+      "iou": 0.0,
+      "pixel_accuracy": 0.9961528033018112
+    }
+  },
+  {
+    "experiment": "blip-flickr30k-captioning",
+    "model": "Salesforce/blip-image-captioning-base",
+    "task": "image_captioning",
+    "clean": {
+      "bleu1": 0.18420687291109927,
+      "bleu4": 0.1007089360978653,
+      "exact_match": 0.0
+    },
+    "obfuscated": {
+      "bleu1": 0.2293505807912501,
+      "bleu4": 0.11128235269772066,
+      "exact_match": 0.0
+    }
+  },
+  {
+    "experiment": "yolos-coco",
+    "model": "hustvl/yolos-tiny",
+    "task": "object_detection",
+    "clean": {
+      "map": 0.2709309756755829,
+      "map_50": 0.44114950299263,
+      "map_75": 0.275346040725708,
+      "map_small": 0.062040816992521286,
+      "map_medium": 0.20189528167247772,
+      "map_large": 0.4130997359752655,
+      "mar_1": 0.2408871203660965,
+      "mar_10": 0.3845117688179016,
+      "mar_100": 0.40279656648635864,
+      "mar_small": 0.10104870796203613,
+      "mar_medium": 0.33054256439208984,
+      "mar_large": 0.571049153804779
+    },
+    "obfuscated": {
+      "map": 0.23291046917438507,
+      "map_50": 0.37687867879867554,
+      "map_75": 0.23362845182418823,
+      "map_small": 0.047713421285152435,
+      "map_medium": 0.17108272016048431,
+      "map_large": 0.35854724049568176,
+      "mar_1": 0.21596083045005798,
+      "mar_10": 0.34099337458610535,
+      "mar_100": 0.3590838313102722,
+      "mar_small": 0.07706046104431152,
+      "mar_medium": 0.28175756335258484,
+      "mar_large": 0.507556140422821
+    }
+  },
+  {
+    "experiment": "owlvit-coco",
+    "model": "google/owlvit-base-patch32",
+    "task": "zero_shot_object_detection",
+    "clean": {
+      "map": 0.24701477587223053,
+      "map_50": 0.3787882924079895,
+      "map_75": 0.2683400809764862,
+      "map_small": 0.07853604853153229,
+      "map_medium": 0.23908664286136627,
+      "map_large": 0.3651117980480194,
+      "mar_1": 0.24287371337413788,
+      "mar_10": 0.34796828031539917,
+      "mar_100": 0.3530427813529968,
+      "mar_small": 0.12197113037109375,
+      "mar_medium": 0.3286638855934143,
+      "mar_large": 0.4733726978302002
+    },
+    "obfuscated": {
+      "map": 0.21441374719142914,
+      "map_50": 0.3281274437904358,
+      "map_75": 0.23184430599212646,
+      "map_small": 0.041569650173187256,
+      "map_medium": 0.16622339189052582,
+      "map_large": 0.3295641541481018,
+      "mar_1": 0.221763476729393,
+      "mar_10": 0.30390283465385437,
+      "mar_100": 0.30692875385284424,
+      "mar_small": 0.06372230499982834,
+      "mar_medium": 0.23603874444961548,
+      "mar_large": 0.45296016335487366
+    }
+  }
+]

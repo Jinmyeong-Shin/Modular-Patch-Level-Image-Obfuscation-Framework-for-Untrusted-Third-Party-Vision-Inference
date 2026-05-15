@@ -1,0 +1,17 @@
+{
+  "experiment": "vit-bloodmnist",
+  "model": "google/vit-base-patch16-224",
+  "task": "classification",
+  "clean": {
+    "accuracy": 0.9798304589301374,
+    "recall": 0.9798242052957566,
+    "precision": 0.9779623402059898,
+    "f1": 0.9788389865805474
+  },
+  "obfuscated": {
+    "accuracy": 0.9625840397544577,
+    "recall": 0.9563271361640233,
+    "precision": 0.9623037165955834,
+    "f1": 0.9580784745622992
+  }
+}

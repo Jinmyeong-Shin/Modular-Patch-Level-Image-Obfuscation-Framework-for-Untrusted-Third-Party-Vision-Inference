@@ -1,0 +1,141 @@
+{
+  "created_at_utc": "2026-05-15T09:43:12.527018+00:00",
+  "experiment": "horio-adversary-comparison-vit-cifar10",
+  "base_experiment": "vit-cifar10",
+  "task": "adversarial_reconstruction_comparison",
+  "tensor_domain": "rgb_resized_to_model_input_and_scaled_to_minus1_plus1",
+  "image_size": [
+    224,
+    224
+  ],
+  "sample_counts": {
+    "eval": 8,
+    "attack_train": 32,
+    "chosen_plaintext_calibration": 1
+  },
+  "horio_reference": {
+    "citation_key": "horio2024privacypreservingvisiontransformerusing",
+    "reported_setting": {
+      "fixed_blocks": 120,
+      "fixed_pixels": 500,
+      "reported_cifar10_accuracy": 0.973
+    },
+    "method_note": "Restricted block and in-patch pixel permutation. The transform is lossless and exactly invertible when the secret permutations are known or recovered.",
+    "realized_fixed_fractions": {
+      "num_blocks": 196,
+      "block_width": 768,
+      "fixed_blocks": 120,
+      "fixed_pixels": 500,
+      "fixed_block_fraction": 0.6122448979591837,
+      "fixed_pixel_fraction": 0.6510416666666666
+    }
+  },
+  "attack_config": {
+    "vae_epochs": 8,
+    "cyclegan_epochs": 3,
+    "horio_seed": 42
+  },
+  "threat_models": {
+    "black_box_passive_observation": {
+      "description": "Adversary observes protected images but does not know the secret obfuscation/permutation key.",
+      "proposed": {
+        "direct_obfuscated": {
+          "attack": "obfuscated (no attack)",
+          "ssim": 0.002188129350543022,
+          "psnr": 10.345759306035555,
+          "mse": 0.3693890869617462
+        },
+        "side_channel": {
+          "frequency_correlation": 0.0018637362257625985,
+          "spatial_autocorrelation": -0.1885248750137786,
+          "histogram_kl_divergence": 2.0183517721792064,
+          "mutual_information": 0.04073020815849304
+        }
+      },
+      "horio_restricted_permutation": {
+        "direct_obfuscated": {
+          "attack": "obfuscated (no attack)",
+          "ssim": 0.2653079032897949,
+          "psnr": 12.217585183477295,
+          "mse": 0.24004986882209778
+        },
+        "side_channel": {
+          "frequency_correlation": 0.32796861976385117,
+          "spatial_autocorrelation": 0.6254794523119926,
+          "histogram_kl_divergence": 0.012049917694336424,
+          "mutual_information": 1.0959147214889526
+        }
+      }
+    },
+    "gray_box_paired_learned_inversion": {
+      "description": "Adversary knows the method family and trains a reconstructor from paired protected/clean samples drawn from the same image distribution.",
+      "proposed": {
+        "Adversarial VAE": {
+          "attack": "Adversarial VAE",
+          "ssim": 0.06555263698101044,
+          "psnr": 11.605760414093355,
+          "mse": 0.27636557817459106
+        },
+        "CycleGAN": {
+          "attack": "CycleGAN",
+          "ssim": 0.04378101974725723,
+          "psnr": 10.403032858903527,
+          "mse": 0.3645496666431427
+        }
+      },
+      "horio_restricted_permutation": [
+        {
+          "attack": "Adversarial VAE",
+          "ssim": 0.06495489180088043,
+          "psnr": 11.513077669959689,
+          "mse": 0.282326877117157
+        },
+        {
+          "attack": "CycleGAN",
+          "ssim": 0.19886203110218048,
+          "psnr": 12.862042047631148,
+          "mse": 0.20694540441036224
+        }
+      ]
+    },
+    "gray_box_chosen_plaintext": {
+      "description": "For a pure permutation cipher, one calibration image with unique pixel-channel values recovers the global inverse permutation for this image size.",
+      "proposed": "Not directly comparable: the proposed transform is not a lossless permutation, so exact-secret numerical inversion is reported under the white-box threat model instead.",
+      "horio_restricted_permutation": {
+        "attack": "chosen-plaintext recovered inverse",
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      }
+    },
+    "white_box_exact_secret": {
+      "description": "Adversary knows the protected-image generation secret. Horio can be exactly inverted; the proposed method is attacked with exact-secret L-BFGS optimization.",
+      "proposed": {
+        "L-BFGS": {
+          "attack": "L-BFGS",
+          "ssim": 0.4598439335823059,
+          "psnr": 17.925238785144572,
+          "mse": 0.0644964948296547
+        },
+        "MI-FGSM": {
+          "attack": "MI-FGSM",
+          "ssim": 0.11923711746931076,
+          "psnr": 11.502806564834472,
+          "mse": 0.2829953730106354
+        }
+      },
+      "horio_restricted_permutation": {
+        "attack": "exact-key inverse",
+        "ssim": 1.0,
+        "psnr": "inf",
+        "mse": 0.0
+      }
+    }
+  },
+  "paper_interpretation": [
+    "Use L-BFGS as a conservative worst-case empirical attack, not as a formal proof of non-invertibility.",
+    "The Horio high-accuracy restricted-permutation setting is useful for classification, but it remains a lossless permutation: exact key exposure or one chosen calibration image reconstructs the input perfectly.",
+    "A defensible claim is that the proposed obfuscator retains lower visual recoverability under the tested practical attacks, while Horio-style encryption has a sharper key-compromise failure mode."
+  ],
+  "figure": "outputs/revision_v3/figures/horio-adversary-comparison-vit-cifar10_grid.png"
+}

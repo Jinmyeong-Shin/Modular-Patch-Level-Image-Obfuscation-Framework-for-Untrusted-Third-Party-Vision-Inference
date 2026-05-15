@@ -53,6 +53,11 @@ class ObfuscationPatchEmbedding(nn.Module):
         # Dummy projection for HuggingFace ViT compatibility (dtype check)
         self.projection = SimpleNamespace(weight=torch.empty(0))
 
+    @property
+    def weight(self) -> torch.Tensor:
+        """Compatibility shim for HF modules that inspect patch_embedding.weight."""
+        return self.decode_weights
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         B, C, H, W = x.shape
         if C != self.num_channels:

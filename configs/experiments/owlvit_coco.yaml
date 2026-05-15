@@ -6,11 +6,11 @@ model:
   task: zero_shot_object_detection
 
 obfuscation:
-  patch_size: 14
+  patch_size: 32
   group_size: 100
 
 embedding_training:
-  iterations: 5000
+  iterations: 1000
   learning_rate: 0.01
   batch_size: 32
 
@@ -23,5 +23,6 @@ dataset:
 
 evaluation:
   batch_size: 32
+  max_samples: 512
 
 seed: 42

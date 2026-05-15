@@ -26,7 +26,7 @@ for name in ["httpx", "httpcore", "filelock", "huggingface_hub"]:
 
 logger = logging.getLogger("experiment_runner")
 
-OUTPUT_DIR = "./outputs"
+OUTPUT_DIR = "./outputs/revision_v3"
 
 # Ordered by model group and dataset size (smallest first)
 # This ensures checkpoint reuse within model groups
@@ -41,14 +41,15 @@ EXPERIMENT_ORDER = [
     "configs/experiments/vit_imagenet.yaml",  # ImageNet: 1.28M images
     # Group 3: CLIP
     "configs/experiments/clip_zero_shot.yaml",  # CLIP zero-shot
-    # Group 4: CLIPSeg (352x352 — supported with processor-based size detection)
-    "configs/experiments/clipseg.yaml",  # CLIPSeg zero-shot seg
-    # Group 5: SegFormer ADE20K (224x224)
-    "configs/experiments/segformer.yaml",  # SegFormer ADE20K
-    # Group 6: SegFormer Cityscapes (224x224 — same arch, different weights)
-    "configs/experiments/segformer_cityscapes.yaml",  # SegFormer Cityscapes
-    # SKIPPED: YOLOS (non-square variable-size images — incompatible with patch obfuscation)
-    # SKIPPED: OWL-ViT (768x768 — very high memory)
+    # Revision-v3 task coverage additions
+    "configs/experiments/mvtec_anomaly.yaml",  # industrial anomaly detection
+    "configs/experiments/clip_image_retrieval.yaml",  # image-image retrieval
+    "configs/experiments/clip_flickr30k_retrieval.yaml",  # image-text retrieval
+    "configs/experiments/medical_minimsd_segmentation.yaml",  # binary medical segmentation
+    "configs/experiments/blip_flickr30k_captioning.yaml",  # image captioning
+    # Group 4: Object Detection
+    "configs/experiments/yolos_coco.yaml",  # YOLOS object detection on COCO
+    "configs/experiments/owlvit_coco.yaml",  # OWL-ViT zero-shot object detection on COCO
     # SKIPPED: ViT-Large highres (384x384 — high memory)
 ]
 
@@ -106,6 +107,7 @@ def run_single_experiment(config_path: str) -> dict | None:
     """Run a single experiment with full resource management."""
     from vit_obfuscation.config.experiment import ExperimentConfig
     from vit_obfuscation.runner.runner import ExperimentRunner
+    from vit_obfuscation.outputs.manifest import write_manifest
 
     config = ExperimentConfig.from_yaml(config_path)
     config.output_dir = OUTPUT_DIR
@@ -140,6 +142,13 @@ def run_single_experiment(config_path: str) -> dict | None:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         with open(os.path.join(OUTPUT_DIR, f"{config.name}_results.json"), "w") as f:
             json.dump(error_result, f, indent=2)
+        write_manifest(
+            config=config,
+            output_dir=OUTPUT_DIR,
+            result_file=os.path.join(OUTPUT_DIR, f"{config.name}_results.json"),
+            status="error",
+            error=str(e),
+        )
         return error_result
     finally:
         # Always clear GPU after each experiment

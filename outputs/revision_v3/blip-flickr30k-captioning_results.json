@@ -1,0 +1,15 @@
+{
+  "experiment": "blip-flickr30k-captioning",
+  "model": "Salesforce/blip-image-captioning-base",
+  "task": "image_captioning",
+  "clean": {
+    "bleu1": 0.18420687291109927,
+    "bleu4": 0.1007089360978653,
+    "exact_match": 0.0
+  },
+  "obfuscated": {
+    "bleu1": 0.2293505807912501,
+    "bleu4": 0.11128235269772066,
+    "exact_match": 0.0
+  }
+}

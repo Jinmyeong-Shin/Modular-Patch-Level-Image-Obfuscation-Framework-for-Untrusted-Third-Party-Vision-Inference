@@ -6,16 +6,16 @@ model:
   task: object_detection
 
 obfuscation:
-  patch_size: 14
+  patch_size: 16
   group_size: 100
 
 embedding_training:
-  iterations: 5000
+  iterations: 1000
   learning_rate: 0.01
   batch_size: 32
 
 task_training:
-  iterations: 1000
+  iterations: 300
   learning_rate: 0.0001
   batch_size: 32
 
@@ -28,5 +28,6 @@ dataset:
 
 evaluation:
   batch_size: 32
+  max_samples: 512
 
 seed: 42

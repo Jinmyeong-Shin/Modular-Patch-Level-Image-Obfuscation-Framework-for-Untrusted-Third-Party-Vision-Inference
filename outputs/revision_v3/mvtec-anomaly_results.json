@@ -1,0 +1,17 @@
+{
+  "experiment": "mvtec-anomaly",
+  "model": "openai/clip-vit-base-patch32",
+  "task": "anomaly_detection",
+  "clean": {
+    "image_auroc": 1.0,
+    "image_average_precision": 1.0,
+    "pixel_auroc": 0.9693713055205475,
+    "pro_score": 0.826711987792904
+  },
+  "obfuscated": {
+    "image_auroc": 0.716796875,
+    "image_average_precision": 0.7086071243378921,
+    "pixel_auroc": 0.9413642932421595,
+    "pro_score": 0.6930587221441449
+  }
+}

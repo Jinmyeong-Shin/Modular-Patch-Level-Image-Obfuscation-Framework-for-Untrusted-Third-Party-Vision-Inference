@@ -10,3 +10,4 @@ accelerate
 scikit-learn
 torchmetrics
 pycocotools
+medmnist

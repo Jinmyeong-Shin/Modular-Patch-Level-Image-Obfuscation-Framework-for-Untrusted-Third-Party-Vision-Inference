@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from ..obfuscation.obfuscator import ChannelWisePatchLevelObfuscator
 from .cyclegan_attack import cyclegan_reconstruct, train_cyclegan_attack
 from .lbfgs_inversion import lbfgs_inversion_attack
-from .mi_fgsm import SimpleUNet, mi_fgsm_attack, train_reconstruction_model
+from .mi_fgsm import mi_fgsm_attack
 from .vae_reconstruction import train_vae_attack, vae_reconstruct
 
 logger = logging.getLogger(__name__)
@@ -26,11 +26,15 @@ def compute_psnr(
     return 10 * np.log10(data_range**2 / mse)
 
 
-def compute_ssim(img1: torch.Tensor, img2: torch.Tensor) -> float:
+def compute_ssim(
+    img1: torch.Tensor,
+    img2: torch.Tensor,
+    data_range: float = 2.0,
+) -> float:
     """Compute mean SSIM between two batches of images."""
     # Simple SSIM implementation
-    C1 = (0.01 * 2) ** 2  # data_range = 2
-    C2 = (0.03 * 2) ** 2
+    C1 = (0.01 * data_range) ** 2
+    C2 = (0.03 * data_range) ** 2
 
     mu1 = F.avg_pool2d(img1, 11, 1, 5)
     mu2 = F.avg_pool2d(img2, 11, 1, 5)
@@ -55,6 +59,7 @@ class AttackResult:
     attack_name: str
     ssim: float
     psnr: float
+    mse: float
     reconstructed: torch.Tensor
 
 
@@ -62,33 +67,60 @@ def evaluate_all_attacks(
     obfuscator: ChannelWisePatchLevelObfuscator,
     original_images: torch.Tensor,
     obfuscated_images: torch.Tensor,
+    attack_train_original_images: torch.Tensor | None = None,
+    attack_train_obfuscated_images: torch.Tensor | None = None,
     unet_epochs: int = 50,
     vae_epochs: int = 50,
     cyclegan_epochs: int = 100,
     mi_fgsm_steps: int = 100,
     lbfgs_iterations: int = 200,
     lbfgs_restarts: int = 3,
+    data_range: float = 2.0,
+    clip_min: float = -1.0,
+    clip_max: float = 1.0,
+    run_cyclegan: bool = True,
 ) -> list[AttackResult]:
     """Run all attacks and return SSIM/PSNR results."""
     results = []
+    train_original = (
+        attack_train_original_images
+        if attack_train_original_images is not None
+        else original_images
+    )
+    train_obfuscated = (
+        attack_train_obfuscated_images
+        if attack_train_obfuscated_images is not None
+        else obfuscated_images
+    )
 
     # Baseline: obfuscated vs original
-    ssim_base = compute_ssim(obfuscated_images, original_images)
-    psnr_base = compute_psnr(obfuscated_images, original_images)
+    ssim_base = compute_ssim(obfuscated_images, original_images, data_range=data_range)
+    psnr_base = compute_psnr(obfuscated_images, original_images, data_range=data_range)
+    mse_base = F.mse_loss(obfuscated_images, original_images).item()
     results.append(
-        AttackResult("obfuscated (no attack)", ssim_base, psnr_base, obfuscated_images)
+        AttackResult(
+            "obfuscated (no attack)",
+            ssim_base,
+            psnr_base,
+            mse_base,
+            obfuscated_images,
+        )
     )
     logger.info(f"Baseline — SSIM: {ssim_base:.4f}, PSNR: {psnr_base:.2f} dB")
 
     # 1. MI-FGSM
     logger.info("Running MI-FGSM attack...")
-    unet = train_reconstruction_model(
-        obfuscated_images, original_images, epochs=unet_epochs
+    mi_recon = mi_fgsm_attack(
+        obfuscator,
+        obfuscated_images,
+        iterations=mi_fgsm_steps,
+        clip_min=clip_min,
+        clip_max=clip_max,
     )
-    mi_recon = mi_fgsm_attack(unet, obfuscated_images, iterations=mi_fgsm_steps)
-    ssim_mi = compute_ssim(mi_recon, original_images)
-    psnr_mi = compute_psnr(mi_recon, original_images)
-    results.append(AttackResult("MI-FGSM", ssim_mi, psnr_mi, mi_recon))
+    ssim_mi = compute_ssim(mi_recon, original_images, data_range=data_range)
+    psnr_mi = compute_psnr(mi_recon, original_images, data_range=data_range)
+    mse_mi = F.mse_loss(mi_recon, original_images).item()
+    results.append(AttackResult("MI-FGSM", ssim_mi, psnr_mi, mse_mi, mi_recon))
     logger.info(f"MI-FGSM — SSIM: {ssim_mi:.4f}, PSNR: {psnr_mi:.2f} dB")
 
     # 2. L-BFGS
@@ -98,30 +130,40 @@ def evaluate_all_attacks(
         obfuscated_images,
         max_iterations=lbfgs_iterations,
         num_restarts=lbfgs_restarts,
+        clip_min=clip_min,
+        clip_max=clip_max,
     )
-    ssim_lb = compute_ssim(lbfgs_recon, original_images)
-    psnr_lb = compute_psnr(lbfgs_recon, original_images)
-    results.append(AttackResult("L-BFGS", ssim_lb, psnr_lb, lbfgs_recon))
+    ssim_lb = compute_ssim(lbfgs_recon, original_images, data_range=data_range)
+    psnr_lb = compute_psnr(lbfgs_recon, original_images, data_range=data_range)
+    mse_lb = F.mse_loss(lbfgs_recon, original_images).item()
+    results.append(AttackResult("L-BFGS", ssim_lb, psnr_lb, mse_lb, lbfgs_recon))
     logger.info(f"L-BFGS — SSIM: {ssim_lb:.4f}, PSNR: {psnr_lb:.2f} dB")
 
     # 3. VAE
     logger.info("Running VAE reconstruction attack...")
-    vae = train_vae_attack(obfuscated_images, original_images, epochs=vae_epochs)
+    vae = train_vae_attack(train_obfuscated, train_original, epochs=vae_epochs)
     vae_recon = vae_reconstruct(vae, obfuscated_images)
-    ssim_vae = compute_ssim(vae_recon, original_images)
-    psnr_vae = compute_psnr(vae_recon, original_images)
-    results.append(AttackResult("Adversarial VAE", ssim_vae, psnr_vae, vae_recon))
+    ssim_vae = compute_ssim(vae_recon, original_images, data_range=data_range)
+    psnr_vae = compute_psnr(vae_recon, original_images, data_range=data_range)
+    mse_vae = F.mse_loss(vae_recon, original_images).item()
+    results.append(
+        AttackResult("Adversarial VAE", ssim_vae, psnr_vae, mse_vae, vae_recon)
+    )
     logger.info(f"VAE — SSIM: {ssim_vae:.4f}, PSNR: {psnr_vae:.2f} dB")
 
     # 4. CycleGAN
+    if not run_cyclegan:
+        return results
+
     logger.info("Running CycleGAN reconstruction attack...")
     cyclegan_gen = train_cyclegan_attack(
-        obfuscated_images, original_images, epochs=cyclegan_epochs
+        train_obfuscated, train_original, epochs=cyclegan_epochs
     )
     cyclegan_recon = cyclegan_reconstruct(cyclegan_gen, obfuscated_images)
-    ssim_cg = compute_ssim(cyclegan_recon, original_images)
-    psnr_cg = compute_psnr(cyclegan_recon, original_images)
-    results.append(AttackResult("CycleGAN", ssim_cg, psnr_cg, cyclegan_recon))
+    ssim_cg = compute_ssim(cyclegan_recon, original_images, data_range=data_range)
+    psnr_cg = compute_psnr(cyclegan_recon, original_images, data_range=data_range)
+    mse_cg = F.mse_loss(cyclegan_recon, original_images).item()
+    results.append(AttackResult("CycleGAN", ssim_cg, psnr_cg, mse_cg, cyclegan_recon))
     logger.info(f"CycleGAN — SSIM: {ssim_cg:.4f}, PSNR: {psnr_cg:.2f} dB")
 
     return results

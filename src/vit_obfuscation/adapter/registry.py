@@ -84,14 +84,8 @@ _KNOWN_SPECS: dict[str, EmbeddingSpec] = {
         position_embedding_attr="position_embeddings",
         position_is_nn_embedding=True,
     ),
-    "segformer": EmbeddingSpec(
-        embedding_path="segformer.encoder.patch_embeddings",
-        cls_token_attr=None,
-        position_embedding_attr="",
-        is_hierarchical=True,
-    ),
-    "clipseg": EmbeddingSpec(
-        embedding_path="clip.vision_model.embeddings",
+    "blip": EmbeddingSpec(
+        embedding_path="vision_model.embeddings",
         cls_token_attr="class_embedding",
         position_embedding_attr="position_embedding",
         position_is_nn_embedding=True,

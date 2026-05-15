@@ -1,0 +1,15 @@
+{
+  "experiment": "medical-minimsd-segmentation",
+  "model": "google/vit-base-patch16-224",
+  "task": "medical_segmentation",
+  "clean": {
+    "dice": 0.0,
+    "iou": 0.0,
+    "pixel_accuracy": 0.9961528033018112
+  },
+  "obfuscated": {
+    "dice": 0.0,
+    "iou": 0.0,
+    "pixel_accuracy": 0.9961528033018112
+  }
+}

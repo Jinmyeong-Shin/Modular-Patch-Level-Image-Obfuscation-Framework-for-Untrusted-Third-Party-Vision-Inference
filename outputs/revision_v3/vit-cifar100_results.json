@@ -1,0 +1,17 @@
+{
+  "experiment": "vit-cifar100",
+  "model": "google/vit-base-patch16-224",
+  "task": "classification",
+  "clean": {
+    "accuracy": 0.9176,
+    "recall": 0.9175999999999999,
+    "precision": 0.9187401395096825,
+    "f1": 0.9175219646960119
+  },
+  "obfuscated": {
+    "accuracy": 0.9133,
+    "recall": 0.9133000000000001,
+    "precision": 0.9143362173833954,
+    "f1": 0.9131560191106769
+  }
+}

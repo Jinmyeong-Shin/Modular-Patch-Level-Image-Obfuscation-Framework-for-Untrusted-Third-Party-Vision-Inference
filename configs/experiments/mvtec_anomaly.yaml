@@ -1,0 +1,31 @@
+name: mvtec-anomaly
+description: Bounded industrial anomaly detection/localization on a guided MVTec-style dataset
+
+model:
+  hf_model_name_or_path: openai/clip-vit-base-patch32
+  task: anomaly_detection
+
+obfuscation:
+  patch_size: 32
+  group_size: 100
+
+embedding_training:
+  iterations: 1000
+  learning_rate: 0.01
+  batch_size: 32
+
+dataset:
+  hf_dataset_name_or_path: Kelvin878/mvtec
+  input_column: image
+  label_column: label
+  mask_column: mask_image
+  normal_column: guide
+  train_split: train[:128]
+  eval_split: train[:128]
+  normal_label: 0
+
+evaluation:
+  batch_size: 16
+  max_samples: 128
+
+seed: 42

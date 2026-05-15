@@ -1,0 +1,71 @@
+{
+  "created_at_utc": "2026-05-15T03:06:38.284201+00:00",
+  "status": "success",
+  "error": null,
+  "result_file": "outputs/revision_v3/vit-bloodmnist_results.json",
+  "experiment": "vit-bloodmnist",
+  "task": "classification",
+  "model": "google/vit-base-patch16-224",
+  "dataset": "albertvillanova/medmnist-v2",
+  "seed": 42,
+  "config": {
+    "name": "vit-bloodmnist",
+    "description": "ViT classification on BloodMNIST (blood cell classification)",
+    "model": {
+      "hf_model_name_or_path": "google/vit-base-patch16-224",
+      "task": "classification",
+      "num_classes": 8,
+      "id2label": null
+    },
+    "obfuscation": {
+      "patch_size": 14,
+      "group_size": 100,
+      "apply_patch_permutation": false
+    },
+    "embedding_training": {
+      "iterations": 5000,
+      "learning_rate": 0.01,
+      "batch_size": 32,
+      "training_dataset": "benjamin-paine/imagenet-1k-256x256"
+    },
+    "task_training": {
+      "iterations": 300,
+      "learning_rate": 0.0001,
+      "batch_size": 256
+    },
+    "dataset": {
+      "hf_dataset_name_or_path": "albertvillanova/medmnist-v2",
+      "subset": "bloodmnist",
+      "input_column": "image",
+      "label_column": "label",
+      "text_column": null,
+      "mask_column": null,
+      "id_column": null,
+      "normal_label": null,
+      "train_split": "train",
+      "eval_split": "test",
+      "num_classes": 8,
+      "id2label": null
+    },
+    "evaluation": {
+      "batch_size": 256,
+      "with_obfuscation": true,
+      "max_samples": null,
+      "max_new_tokens": 30,
+      "num_beams": 3
+    },
+    "output_dir": "outputs/revision_v3",
+    "seed": 42
+  },
+  "environment": {
+    "python": "3.14.4",
+    "platform": "Linux-7.0.0-14-generic-x86_64-with-glibc2.41",
+    "torch": "2.12.0+cu130",
+    "transformers": "5.8.1",
+    "cuda_available": true
+  },
+  "git": {
+    "commit": "7335ed56abf9af136934e5767fa51b94f7987679",
+    "status_short": "M configs/experiments/beit_cifar10.yaml\n M configs/experiments/deit_cifar10.yaml\n M configs/experiments/deit_cifar100.yaml\n M configs/experiments/dino_cifar10.yaml\n M configs/experiments/owlvit_coco.yaml\n M configs/experiments/vit_bloodmnist.yaml\n M configs/experiments/vit_cifar10.yaml\n M configs/experiments/vit_cifar100.yaml\n M configs/experiments/vit_dermamnist.yaml\n M configs/experiments/vit_imagenet.yaml\n M configs/experiments/vit_imagenet_highres.yaml\n M configs/experiments/vit_pathmnist.yaml\n M configs/experiments/yolos_coco.yaml\n M pyproject.toml\n M requirements.txt\n M run_experiments.py\n M src/vit_obfuscation/adapter/model_adapter.py\n M src/vit_obfuscation/adapter/registry.py\n M src/vit_obfuscation/attacks/evaluate_attacks.py\n M src/vit_obfuscation/attacks/lbfgs_inversion.py\n M src/vit_obfuscation/attacks/mi_fgsm.py\n M src/vit_obfuscation/cli.py\n M src/vit_obfuscation/config/experiment.py\n M src/vit_obfuscation/datasets/loader.py\n M src/vit_obfuscation/obfuscation/obfuscator.py\n M src/vit_obfuscation/outputs/types.py\n M src/vit_obfuscation/runner/runner.py\n M src/vit_obfuscation/tasks/base.py\n M src/vit_obfuscation/tasks/object_detection.py\n M src/vit_obfuscation/tasks/segmentation.py\n M tests/test_adapter.py\n M tests/test_config.py\n M tests/test_obfuscator.py\n?? configs/experiments/blip_flickr30k_captioning.yaml\n?? configs/experiments/clip_flickr30k_retrieval.yaml\n?? configs/experiments/clip_image_retrieval.yaml\n?? configs/experiments/medical_minimsd_segmentation.yaml\n?? configs/experiments/mvtec_anomaly.yaml\n?? old/\n?? outputs/all_results.json\n?? outputs/clipseg-zero-shot_results.json\n?? outputs/owlvit-coco_results.json\n?? outputs/revision_v3/\n?? outputs/segformer-ade20k_results.json\n?? outputs/segformer-cityscapes_results.json\n?? outputs/yolos-coco_results.json\n?? outputs_test/\n?? src/vit_obfuscation/outputs/manifest.py\n?? src/vit_obfuscation/tasks/anomaly.py\n?? src/vit_obfuscation/tasks/captioning.py\n?? src/vit_obfuscation/tasks/feature_utils.py\n?? src/vit_obfuscation/tasks/medical_segmentation.py\n?? src/vit_obfuscation/tasks/retrieval.py\n?? tests/test_loader_and_tasks.py\n?? tests/test_revision_artifacts.py"
+  }
+}
