@@ -9,6 +9,8 @@
 \usepackage{booktabs}
 \usepackage{color, soul}
 \usepackage{subcaption}
+\usepackage{xurl}
+\newcommand{\rev}[1]{{\color{green}#1}}
 
 \usepackage{bm}
 \makeatletter
@@ -47,11 +49,11 @@
 
 
 \begin{abstract}
-Transformer (ViT)--based architectures. The proposed framework introduces a modular patch-level image obfuscation scheme, where client-side patch-level transformations convert input images into visually unrecognizable forms while preserving the semantic structure required by ViT patch embeddings. These obfuscated images retain high-level semantics required for recognition while ensuring non-invertibility, even when untrusted inference servers are compromised. To support compatibility with ViT-based architectures, the framework decouples obfuscation from recognition by introducing a lightweight deobfuscator network, that approximates ViT-compatible embeddings directly from obfuscated inputs. This decoupling design on untrusted third-party infrastructure eliminates the need for raw image reconstruction at the service end and thus, enables seamless integration with frozen transformer backbone. Also, the proposed framework incorporates a Merkle tree--based attestation mechanism to ensure execution integrity and supports randomized obfuscation scheduling to defend resilience against various reconstruction attacks. Experimental results demonstrate high utility, achieving over 95\% top-1 accuracy on CIFAR-10 classification and over 92\% word-level F1-score on OCR tasks. As each deobfuscator is trained in less than 5 minutes, these results confirm the framework's efficiency and its suitability for real-world secure vision applications requiring minimal training time and rapid deployment.
+\rev{Vision Transformer (ViT)--based inference services increasingly rely on third-party infrastructure, creating a practical need to protect sensitive images before they leave the client. This paper presents a modular patch-level obfuscation framework in which a lightweight client-side transform produces visually degraded inputs and a compact server-side deobfuscator maps them to ViT-compatible embeddings for frozen transformer backbones. The contribution is an incremental engineering integration rather than a new cryptographic primitive: the obfuscator is not a lossless permutation and does not expose a closed-form inverse, while privacy is evaluated empirically under explicit attack models. Across the evaluated classification and retrieval settings, the framework preserves high utility, including CIFAR-10 accuracy of 0.9854 under obfuscation and Flickr30k image-to-text Recall@1 of 0.81. We further report Structural Similarity Index (SSIM) and Peak Signal-to-Noise Ratio (PSNR) under direct and adversarial reconstruction attacks: direct obfuscation gives SSIM 0.0022 and PSNR 10.35 dB, while a conservative white-box L-BFGS optimization attack reaches SSIM 0.4598 and PSNR 17.93 dB but does not recover exact images. In contrast, representative reversible perceptual-encryption approaches based on block and pixel permutations are exactly recoverable under known-key or chosen-plaintext calibration. The framework also includes Merkle tree--based configuration attestation for declared model stacks, with deployment assumptions stated explicitly.}
 \end{abstract}
 
 \begin{keywords}
-Privaccy-Preserving Deep Learning, Vision Transformer, Data Privacy, Cloud Computing Environment
+\rev{Privacy-Preserving Deep Learning, Vision Transformer, Image Obfuscation, Cloud Inference}
 \end{keywords}
 
 \titlepgskip=-21pt
@@ -66,17 +68,17 @@ A promising method to mitigate such risks is to obfuscate visual content before 
 
 In addition, there are some researches about image data obfuscation method that is free from the compromised decoder~\cite{9129656,10.1007/978-3-031-37586-6_18,s24103166}, but those methods require huge computation costs for re-training with obfuscated images. Also, Since they showed the feasibility of each method in a specific classification task, their generalizability across broader vision tasks such as detection, segmentation, or retrieval remains limited. Moreover, their tight coupling between obfuscation and task-specific re-training hinders modular deployment, making them less practical for scalable or plug-and-play secure inference pipelines.
 
-To address these limitations, we propose a modular and lightweight privacy-preserving framework that supports secure inference on untrusted or semi-trusted infrastructures such as public clouds. The framework introduces a non-invertible, patch-level channel obfuscation method executed on the client side, which disrupts local visual statistics while preserving the high-level semantic features necessary for machine recognition.
+To address these limitations, we propose a modular and lightweight privacy-preserving framework that supports secure inference on untrusted or semi-trusted infrastructures such as public clouds. \rev{The framework introduces a non-lossless patch-level channel obfuscation method executed on the client side, which disrupts local visual statistics while preserving the high-level semantic features necessary for machine recognition.}
 
 To achieve compatibility with existing vision transformer~(ViT)-like patch embedding architectures~\cite{dosovitskiy2020vit}, we employ a compact deobfuscator network that approximates the output of the original ViT's patch embedding layer, generating token embeddings directly from the obfuscated image. ViT-like patch embedding techniques have become widely adopted in state-of-the-art multi-modal large language models (LLMs), since GPT-4 by OpenAI~\cite{2023GPT4VisionSC}, Google's Gemini~\cite{geminiteam2025geminifamilyhighlycapable}, Meta's Llma 3.2~\cite{meta2024llama3} and NVIDIA's NVLM~\cite{dai2024nvlmopenfrontierclassmultimodal}. By aligning our design with this widely adopted embedding format, our approach ensures easy and practical integration into existing transformer-based inference pipelines. In addition, this approach separates obfuscation-deobfuscation stage, which is privacy-sensitive, from the ViT backbone network. Therefore, the model does not need to reconstruct the original image or any visual output. Instead, it focuses only on features needed for recognition tasks. This is a key difference from autoencoder-based methods, which reconstruct the original or similar image for further processing.
 
 In addition to the obfuscation and deobfuscation modules, the framework is architected to ensure the integrity and authenticity of inference execution. It enables clients to verify that only authorized model configurations are used during inference, without relying on trusted infrastructure or secure hardware. Also, the system also embraces a simple yet powerful architectural principle: introducing variability in obfuscation paths at runtime. By selecting from a set of interchangeable obfuscators during deployment, it disrupts consistent transformation patterns and significantly increases resistance to inversion and approximation attacks
 
-We evaluate the proposed system across a range of vision tasks using ViT-based models and demonstrate that it maintains high utility, achieving over 95\% top-1 accuracy on CIFAR-10 and over 92\% word-level F1 score on OCR benchmarks. The lightweight deobfuscators can be trained in under 5 minutes, underscoring the framework's practicality and readiness for real-world secure inference applications.
+\rev{We evaluate the proposed system across a broader benchmark suite spanning classification, retrieval, detection, anomaly detection, segmentation, and captioning. The strongest results occur in classification and retrieval, while segmentation and captioning are reported as limitations or exploratory results rather than as primary success claims. The lightweight deobfuscators can be trained in under 5 minutes, underscoring the framework's practicality for rapid secure-inference deployment.}
 
 The contributions of this paper can be summarized as follows:
 \begin{itemize}
-    \item \textbf{Privacy-preserving image obfuscation and deobfuscation architecture:} We propose a non-invertible, channel-wise patch-level obfuscation scheme applied entirely on the client side. This transformation irreversibly removes low-level visual features while preserving high-level semantics, enabling downstream inference without exposing human-recognizable content. A lightweight deobfuscator reconstructs ViT-compatible embeddings without requiring access to the original image
+    \item \rev{\textbf{Privacy-preserving image obfuscation and deobfuscation architecture:} We propose a non-lossless, channel-wise patch-level obfuscation scheme applied entirely on the client side. This transformation suppresses low-level visual features while preserving high-level semantics, enabling downstream inference without exposing human-recognizable content. A lightweight deobfuscator reconstructs ViT-compatible embeddings without requiring access to the original image.}
     \item \textbf{Modular architecture compatible with ViT models:} The framework is designed to operate independently of the ViT backbone. The deobfuscator is trained to match frozen transformer patch embeddings, enabling plug-and-play compatibility with standard pretrained models such as CLIP and GPT-4V without requiring retraining or architectural modification.
     \item \textbf{Secure inference on untrusted third-party infrastructures with Merkle attestation:} To ensure execution integrity, the framework incorporates a Merkle tree--based attestation mechanism. This allows clients to cryptographically verify that inference is conducted using authorized model components, even when deployed on untrusted third-party servers.
 \end{itemize}
@@ -230,6 +232,31 @@ Kim et al.~\cite{s24103166} introduced a differential privacy-based image genera
 
 With the rise of ViT-like architectures, recent studies have begun exploring transformer-specific privacy-preserving methods. Hao et al.~\cite{hao2023privacypreserving} introduced a secure ViT architecture integrated with privacy-preserving mechanisms at token-level encryption, but the method relied heavily on retraining the ViT backbone and complicated the training pipeline. Similarly, Feng et al.~\cite{10445482} presented a ViT-based privacy framework utilizing multi-layered encryption at images and Huffman-Code frequency at embedding layers, increasing computation costs and training complexity. Horio et al.~\cite{horio2024privacypreservingvisiontransformerusing} proposed a permutation-based encryption method for ViTs using fixed random matrices, but it also required ViT retraining and lacked compatibility with frozen pretrained models.
 
+\subsection{\rev{Reversible Perceptual Encryption for ViT-Compatible Models}}
+
+\rev{A closely related line of work studies perceptual or learnable image encryption with secret keys, including pixel negative--positive transforms, EtC block scrambling, block-wise orthogonal transforms, ViT block/pixel permutations, patch-local pixel shuffling, restricted random permutation matrices, and disposable-key variants. Table~\ref{tab:reversible-family-map} groups representative studies by the reversible transform family considered in this comparison. These methods are important baselines because they often preserve classification utility on encrypted images. At the same time, many are reversible by construction: under known-key exposure, or under chosen-plaintext calibration when a permutation key is reused, the original image can be recovered exactly. This distinction is consistent with prior ciphertext-only analyses in the same literature, including jigsaw-puzzle attacks that recover visual information from ViT-oriented encrypted images~\cite{chuman2023_jigsaw}. Therefore, our comparison separates ciphertext-only visual privacy from known-key, chosen-plaintext, and white-box reconstruction settings rather than treating all privacy claims as equivalent.}
+
+\begin{table*}[t]
+\centering
+\caption{\rev{Representative reversible perceptual-encryption families considered in this comparison.}}
+\label{tab:reversible-family-map}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{0.31\textwidth} p{0.31\textwidth} p{0.30\textwidth}@{}}
+\toprule
+\rev{\textbf{Transform family}} & \rev{\textbf{Representative works}} & \rev{\textbf{Exact recovery condition}} \\
+\midrule
+\rev{Pixel negative/channel shuffle} & \rev{\cite{sirichotedumrong2019pixel}} & \rev{Known key} \\
+\rev{EtC/block scrambling} & \rev{\cite{kawamura2020etc,maungmaung2022isotropic,qi2022convmixer_adaptive_permutation,hamano2023jpeg_etc_vit,lin2024convmixer}} & \rev{Known or calibrated key} \\
+\rev{Block-wise orthogonal transform} & \rev{\cite{aso2023random_orthogonal_convmixer}} & \rev{Known matrix} \\
+\rev{ViT block+pixel permutation} & \rev{\cite{qi2022vit,nagamori2023federated_vit,nagamori2024domain_adaptation,kiya2023reliable_vit}} & \rev{Known or calibrated permutation} \\
+\rev{Patch-local pixel shuffle} & \rev{\cite{iijima2022convmixer_model_encryption,kiya2023image_model,jimaging8090233}} & \rev{Known or calibrated permutation} \\
+\rev{Restricted random permutation} & \rev{\cite{horio2024privacypreservingvisiontransformerusing}} & \rev{Known or calibrated permutation} \\
+\rev{Restricted per-image/key permutation} & \rev{\cite{aso2024disposable,hirose2025no_key_management}} & \rev{Compromised target key} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 
 Compared to existing methods~\cite{hao2023privacypreserving,10445482,horio2024privacypreservingvisiontransformerusing}, the proposed method offers a modular, client-side obfuscation scheme based on non-invertible channel-wise patch-level transformations. As summarized in Table~\ref{tab:method-comparison}, it is the only framework that supports seamless integration with frozen ViT models, avoiding the need for retraining or architectural changes. The deobfuscator can be trained efficiently in under five minutes and operates independently of the obfuscator and backbone. Additionally, the framework introduces Merkle tree--based inference attestation, ensuring verifiable execution integrity even on untrusted servers. These capabilities collectively enable secure, scalable, and efficient deployment for privacy-preserving vision tasks in real-world settings.
 
@@ -254,7 +281,7 @@ This work targets privacy-preserving inference in scenarios where image processi
 {Our threat model assumes a strong adversary who operates under a white-box model for all server-side components but faces a black-box model for the client's private operations. As illustrated in Figure}~\ref{fig:threat-model}{, the adversary is the inference server itself. In this white-box context, the attacker has complete access to the deployed deobfuscator and backbone models, can inspect and log all obfuscated inputs and their corresponding outputs, and may attempt to derive inverse transformations or semantic reconstructions using adaptive machine learning techniques. The adversary may also attempt to tamper with the execution flow by substituting unauthorized model components. However, even with this extensive power on the server, the attacker's capabilities are strictly limited at the client boundary. The client-side obfuscator remains a secure black box, meaning the attacker does not have access to the original images before obfuscation, the obfuscator's internal parameters, or the cryptographic keys used to sign execution configurations. This fundamental separation ensures that the user's raw data and the transformation secrets remain confidential.}
 
 
-To defend against this class of adversary, the system must achieve several core guarantees. First, it must ensure that input data cannot be feasibly reconstructed from its obfuscated form, even when the deobfuscator and backbone are fully exposed. Second, the inference server must not be able to forge or substitute model components without detection. Third, inference results must be provably tied to the correct inputs and configurations, preventing replay, forgery, or selective misbehavior. Finally, the system must resist adaptive attacks that exploit structural regularities or statistical consistencies across samples to approximate the obfuscation transformation.
+\rev{To defend against this class of adversary, the system should satisfy several practical security requirements. First, it should make input reconstruction difficult under the explicit attack models evaluated in this paper, even when the deobfuscator and backbone are exposed. Second, the inference server should not be able to forge or substitute declared model components without detection. Third, inference results should be bound to the correct inputs and configurations to reduce replay, forgery, or selective-misbehavior risks. Finally, the system should reduce the usefulness of adaptive attacks that exploit structural regularities or statistical consistencies across samples to approximate the obfuscation transformation.}
 
 These requirements motivate the design of a framework in which the obfuscation process is randomized and client-side, the deobfuscator is trained to reconstruct only model-compatible embeddings rather than pixel-level features, and the execution path is cryptographically attested using Merkle tree signatures and per-request bindings. The following section details the architecture and mechanisms used to meet these goals.
 
@@ -374,11 +401,11 @@ As described in Algorithm~\ref{alg:obfuscator}, the input image $\mathbf{X} \in 
 \begin{equation}
     \mathbf{Q} = \mathbf{W}_{c,k}\ast\mathbf{X}_{c,i:j},k = \bigl(\tfrac{i}{p}\cdot\tfrac{W}{p}+\tfrac{j}{p}\bigr)\bmod P
 \end{equation}
-After transformation, all patches within each channel are permuted according to a random permutation map $\pi_c$, and the final channel-wise tensor is further scrambled via a global channel permutation $\rho$. The final output $\mathbf{Y}$ is formed by reassembling the permuted patches and applying a $\tanh$ activation to bound the value range:
+\rev{After transformation, the framework can permute patches within each channel according to a random permutation map $\pi_c$, and the final channel-wise tensor is further scrambled via a global channel permutation $\rho$. In the experiments reported here, the active client transform is interpreted as patch-wise random linear transformation with channel permutation, while patch permutation remains a configurable extension. The final output $\mathbf{Y}$ is formed by reassembling the transformed patches and applying a $\tanh$ activation to bound the value range:}
 \begin{equation}
     \mathbf{Y} = \text{tanh}(\text{PermuteChannels}(\text{Assemble}(\pi_c(\mathbf{Q}_{c,i})), \rho))
 \end{equation}
-This construction guarantees spatial and channel-wise disruption without destroying semantic representations, enabling compatibility with transformer-based models or ViT-like encoders through learned deobfuscation. \\
+\rev{This construction empirically disrupts spatial and channel-wise low-level statistics while preserving enough task-relevant structure for transformer-based models or ViT-like encoders through learned deobfuscation.} \\
 
 \noindent\textbf{Deobfuscation Method for Embedding Recovery}
 
@@ -406,7 +433,7 @@ $P_{\text{deobf}} \cdot (C + 1)$ \\
 \end{table}
 
 
-To recover task-relevant representations from obfuscated inputs, we introduce a lightweight, learnable deobfuscator network that approximates the embedding space of a frozen ViT-like vision backbone. The deobfuscator is deployed server-side, decoupled from the obfuscator, and is designed to restore semantic embeddings, not original pixel values. Therefore, the privacy of original image is preserved even if the server-side system is compromised.
+\rev{To recover task-relevant representations from obfuscated inputs, we introduce a lightweight, learnable deobfuscator network that approximates the embedding space of a frozen ViT-like vision backbone. The deobfuscator is deployed server-side, decoupled from the obfuscator, and is trained to restore semantic embeddings rather than original pixel values. Therefore, compromise of the server-side model stack does not directly expose a reconstruction decoder for the client's original image.}
 
 Given an obfuscated input $\mathbf{Y} = \mathcal{O}(\mathbf{X})$ produced by the client-side obfuscator $\mathcal{O}(\cdot)$, the deobfuscator $\mathcal{D}_\phi$ is trained to mimic the output of a reference patch embedding function $\mathcal{E}(\cdot)$ (e.g., ViT patch embeddings from CLIP or a downstream task-specific encoder). The deobfuscator learns to satisfy the following objective:
 \begin{equation}
@@ -431,11 +458,11 @@ This intentional patch misalignment increases security by disrupting the structu
 
 \subsection{Modular Architecture Compatible with ViT Models}\label{sec:pro:modular}
 
-{The proposed framework is designed for untrusted cloud environments and is built on a three-party architecture consisting of a service provider, a client, and an untrusted third-party inference server. The service provider prepares the system by creating non-invertible obfuscation maps and corresponding lightweight deobfuscators designed to work with a pre-trained backbone model. These components are designed to irreversibly distort low-level visual features while preserving the high-level semantics needed for inference. The client, operating as the secure entry point, applies one of these obfuscation maps to an input image, making it visually unrecognizable before transmitting it to the server. The server, which only hosts the deobfuscator and the main inference model, can then perform its task without ever accessing the original image or the private transformation process.
+\rev{The proposed framework is designed for untrusted cloud environments and is built on a three-party architecture consisting of a service provider, a client, and an untrusted third-party inference server. The service provider prepares the system by creating client-side obfuscation maps and corresponding lightweight deobfuscators designed to work with a pre-trained backbone model. These components are designed to suppress low-level visual features while preserving the high-level semantics needed for inference. The client, operating as the secure entry point, applies one of these obfuscation maps to an input image, making it visually unrecognizable before transmitting it to the server. The server, which only hosts the deobfuscator and the main inference model, can then perform its task without receiving the original image or the private transformation process.}
 
 A major advantage of this architecture is its efficiency, stealth, and modularity. In the context of the proposed framework, modularity specifically refers to the architectural separation of the three core components: (1) the client-side obfuscator, (2) the server-side deobfuscator, and (3) the main inference backbone. This design allows each component to function as an independent, interchangeable module. This decoupling allows the framework to be plug-and-play, integrating seamlessly with frozen, pretrained vision transformers like CLIP and GPT-4V without needing the costly retraining or architectural modifications required by previous methods. The obfuscation process itself is computationally lightweight and suitable for edge devices, while the resulting obfuscated images resemble random noise, rendering them uninterpretable to outside observers.
 
-This design provides strong privacy guarantees, ensuring the client's raw image data remains private even if the server-side deobfuscator and backbone model are fully compromised. The obfuscation process is intentionally non-invertible, using randomized, patch-wise distortions to destroy visual information. The deobfuscator is trained only to recover ViT-compatible embeddings, not to reconstruct the original image, which is never restored or estimated at any point on the server. To further enhance security, the framework supports optional random obfuscation scheduling, where the client selects from a pool of signed obfuscation modules for each request. This introduces structural randomness that makes it significantly harder for adversaries to train generalized inversion models, while cryptographic attestation ensures the process remains verifiable.}
+\rev{This design provides empirical resistance to image reconstruction under the attack settings evaluated in Section~\ref{sec:comparison}. The obfuscation process is not a lossless permutation and does not expose a closed-form inverse, while the deobfuscator is trained only to recover ViT-compatible embeddings, not to reconstruct the original image. To further reduce repeated-query leakage, the framework supports optional random obfuscation scheduling, where the client selects from a pool of signed obfuscation modules for each request. This introduces structural variation that complicates generalized inversion models, while cryptographic attestation allows the client to verify the declared execution configuration.}
 
 % The proposed framework operates under the assumption that the computational environment, including the inference server and the communication channels, is either untrusted or semi-trusted as commonly found in cloud-based AI service deployments. To address this assumption, the system is designed around a three-party architecture comprising a service provider, a client, and an untrusted third-party inference server.
 
@@ -564,40 +591,39 @@ All client-server communication is assumed to be encrypted and authenticated usi
 
 The proposed framework provides a multi-layered defense model to preserve the privacy of input data and ensure the integrity of model execution under deployment on untrusted cloud environments. This section analyzes how each architectural and cryptographic element contributes to resistance against inversion, tampering, and unauthorized execution. Table~\ref{tab:threat-defense} summarizes the key attack scenarios which are addressed in Section~\ref{sec:threat-model} and the corresponding mechanisms embedded in the framework to mitigate them.
 
-\subsection{Obfuscation as Structural Barrier}
-The channel- and patch-level obfuscator is designed as a fixed, randomized transformation that applies learned convolutional kernels with dual permutations per channel and per spatial region. These transformations are never trained and are instantiated once per client or per obfuscation pool. Their design introduces localized, irreversible distortion that hinders spatial coherence, while maintaining sufficient statistical structure for a downstream model to operate correctly.
+\subsection{\rev{Obfuscation as an Empirical Structural Barrier}}
+\rev{The channel- and patch-level obfuscator is designed as a fixed, randomized transformation that applies patch-wise linear filters and channel-level scrambling before transmission. These transformations are never trained and are instantiated once per client or per obfuscation pool. Their role is to suppress local spatial coherence and low-level visual statistics while maintaining sufficient task-relevant structure for a downstream model to operate correctly.}
 
-Unlike autoencoder-based methods, the obfuscator is not invertible by design. Each patch's representation is convoluted and permuted, resulting in a nonlinear and discontinuous transformation. Furthermore, the application of independent kernels per patch and channel, followed by permutations, ensures the transformation space is combinatorially large and non-differentiable from the model's perspective.
+\rev{Unlike autoencoder-based methods, the server-side component is not trained to reconstruct pixels. The deployed deobfuscator maps obfuscated inputs to ViT-compatible embeddings, which reduces the reconstruction attack surface compared with decoder-based pipelines. This is an empirical design claim: the security evaluation is bounded by the attack models and measurements reported in Section~\ref{sec:comparison}, not by a formal cryptographic proof.}
 
-\subsection{Patch Size Mismatch and Non-Invertibility}
-The deobfuscator operates at a patch size that is intentionally different from that of the obfuscator. Specifically, the patch sizes 
-$p_{\text{obf}}$ and $p_{\text{dobf}}$ are selected such that neither is a divisor of the other. This deliberate misalignment disrupts any direct spatial correspondence between the input and output feature maps, making inversion significantly more difficult. As a result, reconstructing the original image requires overcoming several compounded challenges: the receptive fields between the obfuscated and deobfuscated representations are non-overlapping, the deobfuscator aggregates information across patch boundaries in a manner that cannot be cleanly reversed, and the final projection layers introduce nonlinear compression that discards low-level spatial detail. This architectural arrangement introduces a form of structural entropy that resembles cryptographic salting, where slight variations in configuration lead to unpredictable changes in the transformation outcome, thereby reinforcing resistance to reconstruction attackss.
+\subsection{\rev{Patch Size Mismatch and Reconstruction Difficulty}}
+\rev{The deobfuscator operates at a patch size that is intentionally different from that of the obfuscator. Specifically, the patch sizes $p_{\text{obf}}$ and $p_{\text{dobf}}$ are selected such that neither is a divisor of the other. This deliberate misalignment disrupts direct spatial correspondence between the input and output feature maps, making reconstruction more difficult for optimization-based and learned inverse attacks. Reconstructing the original image requires estimating low-level content across mismatched receptive fields while the deobfuscator aggregates information for semantic embedding recovery rather than pixel restoration.}
 
 \subsection{Merkle Tree--Based Execution Attestation}
 To ensure the integrity of inference executions on untrusted infrastructure, the framework adopts a Merkle tree--based signature mechanism that allows clients to verify authorized model configurations efficiently. The service provider enumerates all valid execution configurations as tuples ($T_i = (H_{obf},H_{deobf},H_{backbone})$), where each element is a cryptographic hash of the corresponding serialized model. These tuples are individually hashed and inserted as leaves into a Merkle tree, from which the provider computes a root hash $R$ and digitally signs it using its private key. During inference, the server must declare the configuration tuple $T_j$ used for the request and provide a Merkle proof $P_j$ linking the corresponding leaf $H(T_j)$ to the signed root. In addition, the server must produce an execution signature $\textrm{Sig}_{\text{exec}} = \textrm{Sign}_{\text{srv}}(H(T_j||H(\hat{\textbf{x}})||\textbf{y}||\textbf{nonce})$, which binds the declared configuration, the obfuscated input $\hat{\mathbf{x}}$, the resulting output $\mathbf{y}$, and a client-issued nonce. This combination of static root attestation and dynamic execution binding ensures that every inference is verifiably performed using an authorized and untampered model stack, without revealing the internal weights or requiring full signature validation for each model individually.
 
-\subsection{Random Obfuscation Scheduling}
-{To enhance privacy guarantees and defend against model inversion strategies, the framework optionally supports randomized scheduling of obfuscators at the client side. Instead of applying a fixed transformation to every input, the client selects an obfuscator at random from a predefined pool authorized by the provider. This variation introduces structural uncertainty, which disrupts the consistency that attackers rely on when attempting to infer inverse mappings from multiple samples. As a result, common attack strategies like supervised inversion or adaptive attacks are significantly weakened.
+\rev{The attestation mechanism verifies declared configuration membership and binds a response to the obfuscated input hash and nonce. It does not, by itself, prove faithful hardware execution if an adversarial server can bypass the declared binary. Deployments that require stronger runtime guarantees should combine this mechanism with authenticated transport, key protection, audit logging, or trusted execution support.}
 
-Furthermore, this scheduling provides resilience against a secondary threat where a single client's obfuscation secrets are compromised. Because other clients use different, independently initialized obfuscators from the pool, the exposure of one client's secrets does not jeopardize the security of others, effectively containing the damage. In this context, the size of the obfuscator pool primarily functions as a security parameter with no direct impact on model performance. A larger pool enhances security by increasing attacker uncertainty and making it computationally harder to train a universal inversion model that generalizes across clients. Performance remains consistent because the identity of the selected obfuscator is included in the execution tuple $T_j$, which is cryptographically attested via the Merkle root. This allows clients to confirm the integrity of the execution pipeline, even in the presence of randomized behavior, without compromising the trust model.}
+\subsection{\rev{Random Obfuscation Scheduling}}
+\rev{To improve empirical resistance against model inversion strategies, the framework optionally supports randomized scheduling of obfuscators at the client side. Instead of applying a fixed transformation to every input, the client selects an obfuscator at random from a predefined pool authorized by the provider. This variation introduces structural uncertainty that disrupts the consistency attackers rely on when attempting to infer inverse mappings from multiple samples.}
 
-\subsection{Theoretical Guarantees of Non-Invertibility}\label{sec:non-inv}
+\rev{Furthermore, this scheduling contains the impact of a secondary threat where one client's obfuscation parameters are exposed. Other clients can use different, independently initialized obfuscators from the pool, so exposure of one configuration need not reveal the configuration used by others. In this context, the size of the obfuscator pool functions as a practical security parameter that increases attacker uncertainty, while performance remains consistent because the selected obfuscator identity is included in the attested execution tuple $T_j$.}
 
-{A theoretical security analysis of the proposed architecture reveals its strong resistance to input reconstruction, likening its one-way nature to principles found in cryptography. The system can be modeled as a function that transforms an input image tensor $X \in \mathbb{R}^{C \times H \times W}$ into an obfuscated output tensor $Y \in \mathbb{R}^{C \times H \times W}$. This transformation involves a series of operations including patch-level convolution with a set of fixed, randomly initialized, and unknown kernels $W_{c,k}$, followed by dual permutation operations, one for patches within each channel $\pi_c$ and a global one across channels $\rho$, and a final $\tanh$ activation function}~\cite{46614}{. The core security claim is that recovering the original input $X$ from the output $Y$ is computationally intractable for an adversary who does not possess knowledge of the obfuscation maps.
+\subsection{\rev{Empirical Reconstruction Resistance and Scope}}\label{sec:non-inv}
 
-The security of this construction is anchored in two fundamental computational challenges. First, the problem of determining $X$ from its convolved and permuted representation is a significantly harder variant of blind deconvolution. Without knowledge of the random kernels $W_{c,k}$ and the specific permutation maps $\pi_c$ and $\rho$, the solution space for $X$ is combinatorially large and the problem is severely ill-posed}~\cite{10.1007/978-3-030-33843-5_16}{. Second, and more critically, the final $\tanh$ activation function introduces a severe and non-invertible information bottleneck. As a non-injective mapping, $\tanh$ collapses an infinite input domain into a finite range of (-1, 1), permanently erasing information about the magnitude of pre-activation values as they approach the saturation regions. This makes it impossible to uniquely determine the pre-activation state from $Y$. An adversary must therefore solve a complex blind deconvolution problem using data from which essential information has been provably destroyed, compounding the difficulty beyond practical feasibility.
+\rev{We do not claim that the obfuscator is a formally proven cryptographic primitive. The system can be modeled as a function that transforms an input image tensor $X \in \mathbb{R}^{C \times H \times W}$ into an obfuscated output tensor $Y \in \mathbb{R}^{C \times H \times W}$ through patch-wise random filtering, channel scrambling, and a bounded nonlinear activation. This transform is not a lossless permutation and does not provide the simple closed-form inverse available to reversible block or pixel permutation schemes.}
 
-In aggregate, the described architecture functions as a strong one-way function, exhibiting robust pre-image resistance. The combination of random patch-wise convolutions and dual permutations acts as a pseudo-random projection that effectively diffuses input information and disrupts spatial coherence. The subsequent application of the $\tanh$ function provides the core non-linear compression that guarantees irreversibility. This process is intentionally non-invertible by design. Therefore, any attempt to find the pre-image $X$ given $Y$ is computationally infeasible, establishing the architecture's inherent security against model inversion and input reconstruction attacks, even when server-side components like the deobfuscator are fully compromised.}
+\rev{The resulting inverse problem combines blind estimation of the client-side transform with reconstruction from a representation optimized for downstream semantic embeddings rather than pixels. The $\tanh$ activation further bounds the output range and can saturate low-level magnitude information, which makes exact recovery ill-posed in practice. We therefore evaluate reconstruction resistance empirically with direct observation, learned VAE and CycleGAN inversion, MI-FGSM perturbation, and a conservative L-BFGS optimization attack with white-box access to the evaluated transform.}
 
-\subsection{Entropy-Based Security Analysis of Patch-Level Obfuscation}
+\subsection{\rev{Search-Space Discussion of Patch-Level Obfuscation}}
 
-To quantify the strength of the obfuscation, we analyze its security from an information-theoretic perspective. The obfuscator applies randomized convolutional kernels to non-overlapping image patches, followed by per-channel and per-patch permutations. Let the input image of size $224 \times 224$ be divided into patches of size $16 \times 16$, resulting in $N = 196$ patches per channel. Each convolutional filter applied to a patch acts as a learned transformation in a high-dimensional permutation space. Across $C = 3$ channels and $P$ patch groups, the entropy from patch-level convolutional transformations is approximately $C \cdot P \cdot \log_2(256!)$ bits. Further, spatial patch permutations within each channel contribute $C \cdot \log_2(N!)$ bits, and global channel permutation introduces $\log_2(C!)$ bits.
+\rev{To characterize the search space faced by an attacker without the client-side configuration, we estimate the number of possible patch-level transformations. The obfuscator applies randomized kernels to non-overlapping image patches and may include channel and patch permutations depending on the selected configuration. Let the input image of size $224 \times 224$ be divided into patches of size $16 \times 16$, resulting in $N = 196$ patches per channel. Across $C = 3$ channels and $P$ patch groups, the search-space contribution from patch-level transformations is approximately $C \cdot P \cdot \log_2(256!)$ bits. Spatial patch permutations within each channel contribute up to $C \cdot \log_2(N!)$ bits when enabled, and global channel permutation introduces $\log_2(C!)$ bits.}
 
 Combining these components, the total entropy of the obfuscator becomes:
 \begin{equation}
 \mathcal{H}_{\text{obfuscator}} \approx C \cdot P \cdot \log_2(p^2!) + C \cdot \log_2(N!) + \log_2(C!)
 \end{equation}
-Applying Stirling's approximation, this leads to an obfuscation space with entropy exceeding $10^5$ bits when $P \geq 16$. This high entropy ensures that recovering the original image through brute-force enumeration or statistical approximation is infeasible. Additionally, the mismatch between the patch size of the obfuscator and that of the deobfuscator (e.g., $14 \times 14$ vs. $16 \times 16$) breaks spatial alignment and further increases uncertainty. This architectural asymmetry introduces structural entropy similar to cryptographic salting, significantly reducing the feasibility of inversion attacks, even when parts of the system, the deobfuscator, are exposed.
+\rev{Applying Stirling's approximation, this estimate exceeds $10^5$ bits when $P \geq 16$ under the full permutation setting. This value should be read as a search-space heuristic rather than a cryptographic security proof. In practice, reconstruction resistance is established by the empirical attacks reported below, while patch-size mismatch and channel-level scrambling increase the uncertainty faced by attackers that do not possess the client-side configuration.}
 
 \section{Experiments} \label{sec:exp}
 
@@ -641,39 +667,6 @@ PSNR (dB)    & 7.23   & 6.92   & 6.71 & 6.57\\
 \label{fig:obf-vis}
 \end{figure*}
 
-All experiments were conducted on a workstation equipped with an AMD Ryzen 5 7600 6-core processor, 96 GB of DDR5 system memory, and an NVIDIA RTX A6000 GPU. The software environment was based on Python with PyTorch 2.6 and the Hugging Face Transformers library.
-
-To evaluate the effectiveness of the proposed image obfuscation framework, we trained a series of lightweight deobfuscator models tailored to different patch-level obfuscation configurations. All deobfuscators were optimized using the Adam optimizer with a learning rate of 0.01 and {training iterations continued until the loss function converged to a stable value.} The training was performed on the ImageNet-1K dataset~\cite{imagenet15russakovsky} using a batch size of 32, and the maximum training time for any single deobfuscator did not exceed {10} minutes.
-
-This controlled and efficient training regime ensures that the evaluation reflects the practicality of our framework in scenarios requiring rapid adaptation or deployment. All results reported in the subsequent sections were measured using models trained under this unified configuration
-
-\subsection{Perceptual Obfuscation Quality}
-
-
-
-
-
-Before analyzing task-specific model performance, we first assess the perceptual impact of the proposed obfuscation mechanism. Our goal is to ensure that obfuscated images reveal minimal visual cues while retaining utility for downstream inference.
-
-In this evaluation, we apply our obfuscation module to images resized to 224$\times$224, using a fixed patch size of 14$\times$14. We vary the patch group size which controls the number of distinct convolutional filters applied per channel. Smaller values result in repeated patterns, while larger values increase randomness.
-
-Figure~\ref{fig:obf-vis} presents visual comparisons between original and obfuscated images from the ImageNet-1K validation set. When the patch group size is small (e.g., 32), the obfuscated images exhibit faint repetitive textures. As this value increases (64 and 96), these textures dissolve into noise-like outputs, obscuring semantic structures almost entirely. This effect illustrates the rising entropy and decreasing predictability of spatial content under larger patch group sizes.
-
-To complement visual inspection, we compute Structural Similarity Index~(SSIM) and Peak Signal-to-Noise Ratio~(PSNR) between the original and obfuscated images. As shown in Table~\ref{tab:obf-metrics}, both metrics decrease monotonically with larger patch group sizes. SSIM values fall well below 0.1, indicating that perceptual resemblance to the original images is minimal regardless of configuration.
-
-These results confirm that the proposed patch-level channel-local convolutional obfuscator achieves effective visual anonymization, with tunable strength governed by the number of filters per channel. Notably, as shown in the following subsections, this perceptual obfuscation does not significantly degrade downstream inference accuracy, highlighting the effectiveness of the paired deobfuscation strategy.
-
-\subsection{Effect of Obfuscator Patch Size on Classification Accuracy}
-\label{sec:eval:patchsize}
-
-To investigate the trade-off between privacy preservation and task utility, we evaluate the effect of obfuscator patch size on image classification accuracy using two benchmark datasets: CIFAR-10 and CIFAR-100. We measure top-1 accuracy using two vision transformer models, \texttt{clip-base-patch16} and \texttt{clip-large-patch14}~\cite{radford2021learningtransferablevisualmodels}, under multiple patch configurations, with all other components fixed. The results are illustrated in Figure~\ref{fig:patchsize_cifar}.
-
-Across both datasets and model types, smaller obfuscation patches (e.g., $14\times14$ with 256 patch groups) lead to higher classification accuracy, while larger patches (e.g., $112\times112$ with 4 patch groups) result in significant performance degradation. This indicates that finer-grained obfuscation retains sufficient semantic structure for model inference, while coarse patching introduces more severe information loss. For instance, \texttt{clip-base-patch16} achieves 86.8\% and 63.3\% accuracy on CIFAR-10 and CIFAR-100 respectively under $14\times14$ patching, compared to only 19.6\% and 12.4\% under $112\times112$.
-
-Interestingly, although larger convolutional kernels tend to introduce higher local entropy due to their broader receptive fields and more complex transformation capacity, the overall image-level entropy does not necessarily increase, particularly when the number of spatial permutations (i.e., patch groups) becomes small. In contrast, obfuscation with smaller patches increases the number of patch-level permutations, leading to higher spatial entropy and stronger structural disruption even if each local transformation is simpler.
-
-This analysis suggests that global randomness and patch diversity play a more significant role in obfuscation strength than per-patch complexity alone. Therefore, to achieve both privacy and utility, it is beneficial to maximize the number of patch transformations while maintaining spatial granularity. This effect is more pronounced in the CIFAR-100 results due to the higher number of fine-grained classes, where local distortions from large patches reduce the model's ability to distinguish subtle category differences.
-
 \begin{figure}[t]
     \centering
     \subfloat[CIFAR-10]{%
@@ -688,129 +681,60 @@ This analysis suggests that global randomness and patch diversity play a more si
     \label{fig:patchsize_cifar}
 \end{figure}
 
-\subsection{Performance Evaluation on Obfuscated Image Inference}
+All experiments were conducted on a workstation equipped with an AMD Ryzen 5 7600 6-core processor, 96 GB of DDR5 system memory, and an NVIDIA RTX A6000 GPU. The software environment was based on Python with PyTorch 2.6 and the Hugging Face Transformers library.
+
+To evaluate the effectiveness of the proposed image obfuscation framework, we trained a series of lightweight deobfuscator models tailored to different patch-level obfuscation configurations. All deobfuscators were optimized using the Adam optimizer with a learning rate of 0.01 and {training iterations continued until the loss function converged to a stable value.} The training was performed on the ImageNet-1K dataset~\cite{imagenet15russakovsky} using a batch size of 32, and the maximum training time for any single deobfuscator did not exceed {10} minutes.
+
+This controlled and efficient training regime ensures that the evaluation reflects the practicality of our framework in scenarios requiring rapid adaptation or deployment. All results reported in the subsequent sections were measured using models trained under this unified configuration
+
+\rev{For reproducibility, the implementation, experiment scripts, and all experimental artifacts used to produce the reported results are available in the public repository: \url{https://github.com/Jinmyeong-Shin/Modular-Patch-Level-Image-Obfuscation-Framework-for-Untrusted-Third-Party-Vision-Inference}.}
+
+\subsection{Perceptual Obfuscation Quality}
+
 
 \begin{table*}[t]
 \centering
-\caption{Model Performance Across Tasks With and Without Obfuscation}
+\caption{\rev{Benchmark performance across tasks with and without obfuscation.}}
 \label{tab:performance}
-\begin{tabular}{lllc|cc|c|ccc}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{0.13\textwidth} p{0.13\textwidth} p{0.13\textwidth} p{0.22\textwidth} c c c}
 \toprule
-\multirow{3}{*}{\textbf{Task}} & \multirow{3}{*}{\textbf{Dataset}} & \multirow{3}{*}{\textbf{Model}} & \multirow{3}{*}{\textbf{Image Size}} 
-& \multicolumn{2}{c|}{\textbf{Patch Size}} 
-& \multirow{3}{*}{\textbf{Top-1 Acc.}} 
-& \multicolumn{3}{c}{\textbf{Word-level Metrics}} \\
-
-\cmidrule{5-6} \cmidrule{8-10}
-& & & 
-& \textbf{Obfuscation} & \textbf{Deobfuscation} 
-& 
-& \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} \\
-
+\rev{\textbf{Task}} & \rev{\textbf{Dataset}} & \rev{\textbf{Model}} & \rev{\textbf{Metric}} & \rev{\textbf{Clean}} & \rev{\textbf{Obfuscated}} & \rev{\textbf{Change}} \\
 \midrule
-\multirow{8}{*}{Classification} 
-& \multirow{4}{*}{CIFAR-10} 
-& \multirow{2}{*}{ViT-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.9913 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.9881 & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{ViT-L/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.9937 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.9899 & --     & --     & --     \\
-
-& \multirow{4}{*}{CIFAR-100} 
-& \multirow{2}{*}{ViT-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.8977 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.8813 & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{ViT-L/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.9251 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.9108 & --     & --     & --     \\
-
-& \multirow{4}{*}{Tiny-ImageNet} 
-& \multirow{2}{*}{ViT-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.8732 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.8521 & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{ViT-L/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.9153 & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.9098 & --     & --     & --     \\
-
+\rev{Classification} & \rev{CIFAR-10} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.9858} & \rev{0.9854} & \rev{$-0.0004$} \\
+\rev{Classification} & \rev{CIFAR-100} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.9176} & \rev{0.9133} & \rev{$-0.0043$} \\
+\rev{Classification} & \rev{PathMNIST} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.9428} & \rev{0.9373} & \rev{$-0.0054$} \\
+\rev{Classification} & \rev{DermaMNIST} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.8025} & \rev{0.7805} & \rev{$-0.0219$} \\
+\rev{Classification} & \rev{BloodMNIST} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.9798} & \rev{0.9626} & \rev{$-0.0172$} \\
+\rev{Classification} & \rev{ImageNet-1K} & \rev{ViT-B/16} & \rev{Accuracy} & \rev{0.7126} & \rev{0.6586} & \rev{$-0.0540$} \\
 \midrule
-\multirow{8}{*}{\shortstack{Zero-Shot\\Classification}} 
-& \multirow{4}{*}{CIFAR-10} 
-& \multirow{2}{*}{CLIP-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.897  & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.868  & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{CLIP-L/14} & \multirow{2}{*}{224} 
-& --     & --     & 0.9397 & --     & --     & --     \\
-&       &        &        & 16x16 & 14x14 & 0.9295 & --     & --     & --     \\
-
-& \multirow{4}{*}{CIFAR-100} 
-& \multirow{2}{*}{CLIP-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.897  & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.868  & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{CLIP-L/14} & \multirow{2}{*}{224} 
-& --     & --     & 0.9397 & --     & --     & --     \\
-&       &        &        & 16x16 & 14x14 & 0.9295 & --     & --     & --     \\
-
-& \multirow{4}{*}{Tiny-ImageNet} 
-& \multirow{2}{*}{CLIP-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.8619  & --     & --     & --     \\
-&       &        &        & 14x14 & 16x16 & 0.8521  & --     & --     & --     \\
-& \multirow{2}{*}{} & \multirow{2}{*}{CLIP-L/14} & \multirow{2}{*}{224} 
-& --     & --     & 0.9176 & --     & --     & --     \\
-&       &        &        & 16x16 & 14x14 & 0.9105 & --     & --     & --     \\
-
+\rev{Zero-shot classification} & \rev{CIFAR-10} & \rev{CLIP-B/32} & \rev{Accuracy} & \rev{0.8738} & \rev{0.8500} & \rev{$-0.0238$} \\
+\rev{Image retrieval} & \rev{CIFAR-10} & \rev{CLIP-B/32} & \rev{Recall@1} & \rev{0.8870} & \rev{0.8810} & \rev{$-0.0060$} \\
+\rev{Image-text retrieval} & \rev{Flickr30k} & \rev{CLIP-B/32} & \rev{Image-to-text Recall@1} & \rev{0.8400} & \rev{0.8100} & \rev{$-0.0300$} \\
+\rev{Image-text retrieval} & \rev{Flickr30k} & \rev{CLIP-B/32} & \rev{Text-to-image Recall@1} & \rev{0.7950} & \rev{0.7700} & \rev{$-0.0250$} \\
 \midrule
-\multirow{4}{*}{OCR} 
-& \multirow{4}{*}{\shortstack{SROIE 2019\\(cropped)}} 
-& \multirow{2}{*}{TrOCR-Small} & \multirow{2}{*}{384} 
-& --     & --     & --     & 0.9196 & 0.9326 & 0.9261 \\
-&       &        &        & 14x14 & 16x16 & --     & 0.5995 & 0.7639 & 0.6718 \\
-& \multirow{2}{*}{} & \multirow{2}{*}{TrOCR-Base} & \multirow{2}{*}{384} 
-& --     & --     & --     & 0.9389 & 0.9392 & 0.939 \\
-&       &        &        & 14x14 & 16x16 & --     & 0.9254 & 0.9303 & 0.9279 \\
+\rev{Object detection} & \rev{COCO 2017} & \rev{YOLOS-Tiny} & \rev{mAP} & \rev{0.2709} & \rev{0.2329} & \rev{$-0.0380$} \\
+\rev{Zero-shot detection} & \rev{COCO 2017} & \rev{OWLViT-B/32} & \rev{mAP} & \rev{0.2470} & \rev{0.2144} & \rev{$-0.0326$} \\
+\rev{Anomaly detection} & \rev{MVTec AD} & \rev{CLIP-B/32} & \rev{Image AUROC} & \rev{1.0000} & \rev{0.7168} & \rev{$-0.2832$} \\
+\rev{Anomaly localization} & \rev{MVTec AD} & \rev{CLIP-B/32} & \rev{Pixel AUROC} & \rev{0.9694} & \rev{0.9414} & \rev{$-0.0280$} \\
 \midrule
-
-\multirow{3}{*}{\textbf{Task}} & \multirow{3}{*}{\textbf{Dataset}} & \multirow{3}{*}{\textbf{Model}} & \multirow{3}{*}{\textbf{Image Size}} 
-& \multicolumn{2}{c|}{\textbf{Patch Size}} 
-& \multirow{3}{*}{\textbf{mAP(@0.5)}} 
-& \multirow{3}{*}{\textbf{mAP-s}} 
-&\multirow{3}{*}{\textbf{mAP-m}} 
-&\multirow{3}{*}{\textbf{mAP-l}}  \\
-
-\cmidrule{5-6} 
-& & & 
-& \textbf{Obfuscation} & \textbf{Deobfuscation} 
-&  &  &  &  \\
-
-\midrule
-
-\multirow{6}{*}{Object Detection} 
-& \multirow{6}{*}{COCO 2017} 
-& \multirow{2}{*}{YOLOS-B/16} & \multirow{2}{*}{224} 
-& --     & --     & 0.2192 & 0.0088      & 0.0867     & 0.2886     \\
-&       &        &        & 14x14 & 16x16 & 0.1240 & 0.0039  & 0.0411  & 0.1530  \\
-& \multirow{2}{*}{} & \multirow{2}{*}{YOLOS-B/16} & \multirow{2}{*}{384} 
-& --     & --     & 0.4674 &  0.0770  &   0.3069   &   0.5489   \\
-&       &        &        & 14x14 & 16x16 & 0.4067 & 0.0496 & 0.2428 & 0.4888  \\
-& \multirow{2}{*}{} & \multirow{2}{*}{YOLOS-B/16} & \multirow{2}{*}{896} 
-& --     & --     & 0.5851 &  0.1702  &   0.4257   &   0.5961   \\
-&       &        &        & 14x14 & 16x16 & 0.4965 & 0.0971 & 0.3381 & 0.5379  \\
+\rev{Medical segmentation} & \rev{miniMSD} & \rev{ViT-B/16} & \rev{Dice (limitation)} & \rev{0.0000} & \rev{0.0000} & \rev{0.0000} \\
+\rev{Captioning} & \rev{Flickr30k} & \rev{BLIP-base} & \rev{BLEU-4 (exploratory)} & \rev{0.1007} & \rev{0.1113} & \rev{$+0.0106$} \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
 
-To assess the practical utility and generalization of the proposed privacy-preserving inference framework, we evaluate its performance across multiple tasks, datasets, and model types under both standard and obfuscated settings. Table~\ref{tab:performance} summarizes the top-1 classification accuracy and word-level OCR metrics for models with and without the obfuscator--deobfuscator pipeline.
+Before analyzing task-specific model performance, we first assess the perceptual impact of the proposed obfuscation mechanism. Our goal is to ensure that obfuscated images reveal minimal visual cues while retaining utility for downstream inference.
 
-Classification on CIFAR-10, CIFAR-100 and {Tiny-ImageNet~}\cite{Le2015TinyIV} shows that the performance degradation due to obfuscation is relatively modest when patch sizes are sufficiently fine-grained. For instance, ViT-B/16 and ViT-L/16 on CIFAR-10 retain $99.13\%$ and $99.37\%$ top-1 accuracy respectively with obfuscation, representing less than $1.5\%$ degradation compared to the original baselines. Similar trends are observed on CIFAR-100 and {Tiny-ImageNet}, where ViT-L/16 retains over $90\%$ accuracy under obfuscation.
+In this evaluation, we apply our obfuscation module to images resized to 224$\times$224, using a fixed patch size of 14$\times$14. We vary the patch group size which controls the number of distinct convolutional filters applied per channel. Smaller values result in repeated patterns, while larger values increase randomness.
 
-Zero-shot classification using CLIP also demonstrates robustness under the proposed obfuscation. CLIP-B/16 and CLIP-L/14 maintain strong performance on CIFAR-10, CIFAR-100 and {Tiny-ImageNet}, with only a $1.5$--$3.0\%$ absolute drop in top-1 accuracy when switching from clean input to obfuscated input followed by deobfuscation. Notably, the patch sizes between the obfuscator and deobfuscator are intentionally mismatched (e.g., $14\times14$ vs. $16\times16$), contributing to increased privacy while preserving classification performance.
+Figure~\ref{fig:obf-vis} presents visual comparisons between original and obfuscated images from the ImageNet-1K validation set. When the patch group size is small (e.g., 32), the obfuscated images exhibit faint repetitive textures. As this value increases (64 and 96), these textures dissolve into noise-like outputs, obscuring semantic structures almost entirely. This effect illustrates the rising entropy and decreasing predictability of spatial content under larger patch group sizes.
 
-OCR performance on the SROIE 2019~\cite{Huang_2019} dataset provides insight into the system's ability to recover fine-grained semantic information. Using TrOCR models, the obfuscation pipeline maintains strong word-level recognition, with precision, recall, and F1-scores above $0.92$ in most cases. However, there is a noticeable drop when using the smaller TrOCR-Small model under obfuscation, suggesting that lightweight models may struggle with the increased complexity induced by the transformation. The TrOCR-Base model, in contrast, maintains nearly baseline-level performance under obfuscation.
+To complement visual inspection, we compute Structural Similarity Index~(SSIM) and Peak Signal-to-Noise Ratio~(PSNR) between the original and obfuscated images. As shown in Table~\ref{tab:obf-metrics}, both metrics decrease monotonically with larger patch group sizes. SSIM values fall well below 0.1, indicating that perceptual resemblance to the original images is minimal regardless of configuration.
 
-{We further evaluate the framework on the complex task of object detection using the YOLOS-B/16 model on the COCO 2017 dataset. As expected, this spatially sensitive task is more affected by obfuscation than classification. At a higher input resolution of 384x384, the model shows significant resilience, with the mAP@0.5 only decreasing from 0.4674 to 0.4067. This indicates that with sufficient input resolution, our method can preserve the features necessary for object localization. {Also, at resolution of 896x896 which is close to maximum resolution of YOLO-based model, the model shows similar resilience.} A closer look reveals that performance degradation is most pronounced for small objects, mAP-s, while the model remains highly effective for medium and large objects, mAP-m and mAP-l, which is consistent with the nature of patch-level disruptions.
-
-These results validate that the proposed obfuscator--deobfuscator design enables practical and effective deployment of privacy-preserving inference with minimal degradation in utility across a range of tasks, from classification and OCR to the spatially demanding challenge of object detection.}
+These results confirm that the proposed patch-level channel-local convolutional obfuscator achieves effective visual anonymization, with tunable strength governed by the number of filters per channel. Notably, as shown in the following subsections, this perceptual obfuscation does not significantly degrade downstream inference accuracy, highlighting the effectiveness of the paired deobfuscation strategy.
 
 \begin{table}[t!]
 \centering
@@ -825,10 +749,41 @@ Krishnan~\cite{10.1007/978-3-031-37586-6_18}        & CNN           & --      & 
 Kim et al.~\cite{s24103166}      & CNN           & --      & 0.652   \\
 Oh et al.~\cite{oh2022differentially}       & ViT-Tiny      & 0.7377  & --      \\
 Horio et al.~\cite{horio2024privacypreservingvisiontransformerusing} & ViT-B/16      & 0.973   & --      \\
-\textbf{Proposed} & ViT-L/16    & \textbf{0.9899} & \textbf{0.9108} \\
+\rev{\textbf{Proposed}} & \rev{ViT-B/16}    & \rev{\textbf{0.9854}} & \rev{\textbf{0.9133}} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Effect of Obfuscator Patch Size on Classification Accuracy}
+\label{sec:eval:patchsize}
+
+To investigate the trade-off between privacy preservation and task utility, we evaluate the effect of obfuscator patch size on image classification accuracy using two benchmark datasets: CIFAR-10 and CIFAR-100. We measure top-1 accuracy using two vision transformer models, \texttt{clip-base-patch16} and \texttt{clip-large-patch14}~\cite{radford2021learningtransferablevisualmodels}, under multiple patch configurations, with all other components fixed. The results are illustrated in Figure~\ref{fig:patchsize_cifar}.
+
+Across both datasets and model types, smaller obfuscation patches (e.g., $14\times14$ with 256 patch groups) lead to higher classification accuracy, while larger patches (e.g., $112\times112$ with 4 patch groups) result in significant performance degradation. This indicates that finer-grained obfuscation retains sufficient semantic structure for model inference, while coarse patching introduces more severe information loss. For instance, \texttt{clip-base-patch16} achieves 86.8\% and 63.3\% accuracy on CIFAR-10 and CIFAR-100 respectively under $14\times14$ patching, compared to only 19.6\% and 12.4\% under $112\times112$.
+
+Interestingly, although larger convolutional kernels tend to introduce higher local entropy due to their broader receptive fields and more complex transformation capacity, the overall image-level entropy does not necessarily increase, particularly when the number of spatial permutations (i.e., patch groups) becomes small. In contrast, obfuscation with smaller patches increases the number of patch-level permutations, leading to higher spatial entropy and stronger structural disruption even if each local transformation is simpler.
+
+This analysis suggests that global randomness and patch diversity play a more significant role in obfuscation strength than per-patch complexity alone. Therefore, to achieve both privacy and utility, it is beneficial to maximize the number of patch transformations while maintaining spatial granularity. This effect is more pronounced in the CIFAR-100 results due to the higher number of fine-grained classes, where local distortions from large patches reduce the model's ability to distinguish subtle category differences.
+
+
+
+\subsection{Performance Evaluation on Obfuscated Image Inference}
+
+\begin{figure*}[t!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/one_to_one_reconstruction_comparison.png}
+    \caption{\rev{One-to-one qualitative reconstruction comparison on the same CIFAR-10 samples. Direct observation compares the proposed obfuscated output with a representative reversible permutation baseline. Paired learned inversion compares VAE and CycleGAN reconstructions for both methods. In the known-key recovery columns, exact inversion is not applicable to the proposed method because it has no reversible key inverse, while the reversible baseline recovers the original exactly when the key is known.}}
+    \label{fig:one_to_one_reconstruction}
+\end{figure*}
+
+
+\rev{To assess practical utility and generalization, we evaluate the framework across multiple task families under both standard and obfuscated settings. Table~\ref{tab:performance} summarizes the current benchmark suite using the primary metric for each task, together with the absolute change induced by obfuscation.}
+
+\rev{The strongest results occur in classification and retrieval. CIFAR-10 and CIFAR-100 top-1 accuracy decrease by only 0.0004 and 0.0043, respectively, and CIFAR-10 image retrieval loses only 0.0060 in Recall@1. Flickr30k image-text retrieval remains usable, with image-to-text and text-to-image Recall@1 decreases of 0.0300 and 0.0250. Spatially sensitive tasks show larger but bounded degradation: YOLOS-Tiny mAP decreases from 0.2709 to 0.2329, and OWLViT zero-shot detection mAP decreases from 0.2470 to 0.2144.}
+
+\rev{The broader benchmark suite also clarifies limitations. MVTec anomaly detection preserves pixel-level AUROC comparatively well, decreasing from 0.9694 to 0.9414, but image-level AUROC drops from 1.0000 to 0.7168. The miniMSD segmentation run fails for both clean and obfuscated inputs under the evaluated setup, so it is reported as a limitation rather than evidence of successful segmentation. The BLIP captioning row is included as exploratory because the absolute BLEU scores are low and should not be interpreted as a strong captioning result.}
+
+
 
 
 
@@ -836,28 +791,58 @@ Horio et al.~\cite{horio2024privacypreservingvisiontransformerusing} & ViT-B/16 
 
 To quantitatively validate our proposed framework, we compared it against several representative privacy-preserving vision inference methods. Specifically, we selected comparison methods from those whose datasets are publicly available and target task is aligned with our performance evaluation, ensuring a fair and reproducible evaluation. These methods include convolution-based obfuscation by Ko et al.~\cite{9129656}, autoencoder-based anonymization by Rodriguez and Krishnan~\cite{10.1007/978-3-031-37586-6_18}, differential privacy-driven obfuscation by Kim et al.~\cite{s24103166}, ViT-based split learning by Oh et al.~\cite{oh2022differentially}, and permutation-based transformer method by Horio et al.~\cite{horio2024privacypreservingvisiontransformerusing}. All methods were evaluated using standard CIFAR-10 and CIFAR-100 datasets, measuring Top-1 accuracy to ensure direct comparability.
 
-Table~\ref{tab:accuracy-comparison} summarizes the accuracy results for all compared methods. Our proposed method achieves significantly higher accuracy, 98.97\% on CIFAR-10 and 91.08\% on CIFAR-100, demonstrating superior capability to maintain task performance under strong privacy constraints. Although Horio et al.~\cite{horio2024privacypreservingvisiontransformerusing} showed competitive accuracy, their chosen parameters for image obfuscation were insufficiently strong, resulting in target images that remain visually identifiable. This weakness significantly undermines their claimed privacy guarantees, as adversaries can still recognize sensitive image content directly from obfuscated data.
+\rev{Table~\ref{tab:accuracy-comparison} summarizes the accuracy results for all compared methods. In our CIFAR experiments, the proposed method achieves 0.9854 top-1 accuracy on CIFAR-10 and 0.9133 on CIFAR-100, maintaining high task utility under client-side obfuscation. The reversible permutation-based baseline remains competitive for classification, but utility alone does not characterize privacy: its transform is exactly recoverable when the corresponding key or a calibrated permutation is available.}
 
-In contrast, our method employs rigorous, non-invertible channel-wise patch-level obfuscation combined with a lightweight, independently trained deobfuscator. This strategy preserves semantic information required for high task accuracy without revealing original pixel-level content. Moreover, our framework requires no retraining of existing pretrained ViT backbones, facilitating straightforward and efficient integration into established vision workflows.
+\rev{In contrast, the proposed method uses a non-lossless channel-wise patch-level transform combined with a lightweight, independently trained deobfuscator. This strategy preserves semantic information required for high task accuracy without exposing a pixel reconstruction decoder on the server. Moreover, our framework requires no retraining of existing pretrained ViT backbones, facilitating straightforward and efficient integration into established vision workflows.}
 
-\subsection{Empirical Resistance to Reconstruction Attacks}
+\subsection{\rev{Empirical Resistance to Reconstruction Attacks}}
 
-\begin{figure*}[t!]
-    \centering
-    \includegraphics[width=\textwidth]{figures/recon.png}
-    \caption{Qualitative results of a generative model-based reconstruction attack on obfuscated images from the ImageNet dataset. Each row represents a different original image. From left to right, the columns show: (1) the original image, (2-4) the obfuscated images produced by Horio et al.'s method, proposed method without the`tanh activation, and full proposed method, respectively, and (5-7) the corresponding best-effort reconstructions generated by the reconstruction attack.}
-    \label{fig:reconstruction_attack}
-\end{figure*}
 
-{To empirically validate our framework's resilience against reconstruction, we simulate a powerful reconstruction attack under much stronger threat condition defined white-box threat model defined in Section}~\ref{sec:threat-model}{. In this scenario, we assume an adversary has access to the server-side models and can collect a large dataset of original and corresponding obfuscated image pairs, but does not have access to the client's secret obfuscation parameters only. The adversary's goal is to train a generative model to learn a general inverse mapping that can reconstruct original images from new, unseen obfuscated inputs.
 
-Under this condition, we implemented a potent reconstruction attack using CycleGAN's generator trained on pairs of original and obfuscated images from ImageNet-1K dataset. We compare the reconstruction results for three different obfuscation schemes: (1) the method proposed by Horio et al.}~\cite{horio2024privacypreservingvisiontransformerusing}{, (2) proposed obfuscation method without the final tanh activation function, and (3) full proposed obfuscation method. The parameter settings for implementations of each method are identical to those used in Section~}\ref{sec:comparison}
+\rev{To evaluate reconstruction exposure, we use our CIFAR-10 attack evaluation and separate the threat settings that are often conflated in visual privacy comparisons. Figure~\ref{fig:one_to_one_reconstruction} uses the same samples for every column, so direct observation, learned inversion, and known-key recovery are compared one-to-one. The reversible baseline is visually obfuscating under ciphertext-only observation, but it recovers the original exactly when the key or calibrated permutation is available.}
 
-{The qualitative results of this attack are presented in Figure~}\ref{fig:reconstruction_attack}{. The analysis reveals a clear hierarchy of security among the methods. For the method by Horio et al., the attack model is able to learn a strong inverse mapping, successfully reconstructing images with significant structural detail and recognizable semantic content. This confirms that their obfuscation is not sufficiently strong to resist learning-based inversion attacks.
+\rev{For the proposed method, direct observation produces SSIM 0.0022 and PSNR 10.35 dB. Learned VAE and CycleGAN attacks remain low-structure reconstructions, with SSIM 0.0656 and 0.0438, respectively. The L-BFGS result should be interpreted as a conservative white-box optimization stress test rather than a known-key inverse or a formal proof: it reaches SSIM 0.4598 without exact recovery.}
 
-The proposed method without the tanh activation demonstrates slightly improved resilience by showing more small gaussian-like noises, spatial information and faint structural outlines are still recoverable by the generative model. This suggests that the convolution and permutation steps alone provide a strong barrier against human perceptibility, but data-driven machine-based attack can still learn to reverse some of the linear transformations.
+\rev{We also evaluated simple distributional leakage indicators on the obfuscated outputs: frequency correlation 0.0019, spatial autocorrelation $-0.1885$, histogram KL divergence 2.0184, and mutual information 0.0407. These values do not constitute a formal side-channel proof, but they document the low-level leakage channels tested in our evaluation.}
 
-Finally, the full proposed method, which includes the non-linear tanh activation, proves to be highly robust against the reconstruction attack. As shown in the rightmost column. the generative model fails to recover any meaningful information, producing outputs that are visually indistinguishable from random noise. This result empirically validates our theoretical claim in Section~}\ref{sec:non-inv}{: the non-injective tanh function acts as a critical non-linear information bottleneck, permanently destroying low-level pixel information and making the obfuscation practically non-invertible, even against a powerful generative adversary with access to extensive training data.}
+\begin{table*}[t!]
+\centering
+\caption{\rev{Reconstruction metrics for the proposed method on CIFAR-10.}}
+\label{tab:proposed_attack_metrics}
+\begin{tabular}{p{0.26\textwidth} p{0.36\textwidth} c c c}
+\toprule
+\rev{\textbf{Attack setting}} & \rev{\textbf{Adversary capability}} & \rev{\textbf{SSIM}} & \rev{\textbf{PSNR}} & \rev{\textbf{MSE}} \\
+\midrule
+\rev{Direct obfuscated output} & \rev{Ciphertext-only visual observation} & \rev{0.0022} & \rev{10.35} & \rev{0.3694} \\
+\rev{MI-FGSM} & \rev{Iterative gradient perturbation attack} & \rev{0.1192} & \rev{11.50} & \rev{0.2830} \\
+\rev{L-BFGS} & \rev{White-box optimization stress test} & \rev{0.4598} & \rev{17.93} & \rev{0.0645} \\
+\rev{Adversarial VAE} & \rev{Learned inverse model} & \rev{0.0656} & \rev{11.61} & \rev{0.2764} \\
+\rev{CycleGAN} & \rev{Unpaired generative reconstruction} & \rev{0.0438} & \rev{10.40} & \rev{0.3645} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t!]
+\centering
+\caption{\rev{Direct observation and known-key/chosen-plaintext recovery comparison for reversible transform families.}}
+\label{tab:reversible_recovery_metrics}
+\begin{tabular}{p{0.30\textwidth} c c c p{0.26\textwidth}}
+\toprule
+\rev{\textbf{Transform family}} & \rev{\textbf{Direct SSIM}} & \rev{\textbf{Direct PSNR}} & \rev{\textbf{Direct MSE}} & \rev{\textbf{Known-key or calibrated recovery}} \\
+\midrule
+\rev{Proposed obfuscator} & \rev{0.0022} & \rev{10.35} & \rev{0.3694} & \rev{No closed-form exact inverse} \\
+\rev{PE pixel negative/channel shuffle} & \rev{0.0076} & \rev{8.41} & \rev{0.5774} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{EtC block scrambling} & \rev{0.0281} & \rev{8.43} & \rev{0.5742} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{Block orthogonal secret key} & \rev{0.0009} & \rev{8.32} & \rev{0.5891} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{ViT block+pixel permutation} & \rev{0.0279} & \rev{8.55} & \rev{0.5590} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{Patch-local pixel shuffle} & \rev{0.1462} & \rev{13.63} & \rev{0.1734} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{Restricted random permutation} & \rev{0.2653} & \rev{12.22} & \rev{0.2400} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\rev{Restricted per-image/key permutation} & \rev{0.3956} & \rev{14.00} & \rev{0.1594} & \rev{SSIM 1.0, PSNR $\infty$, MSE 0} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\rev{Table~\ref{tab:reversible_recovery_metrics} reports the complementary reversible-family comparison. The intended point is narrow: reversible perceptual-encryption schemes can provide useful visual obfuscation under ciphertext-only settings, but exact recovery follows when the relevant key or calibrated permutation is available. The proposed method is evaluated instead as a non-lossless empirical obfuscator whose residual reconstruction exposure is measured by the attacks in Table~\ref{tab:proposed_attack_metrics}.}
 
 
 \subsection{Computational Overhead of The Proposed Framework}
@@ -883,17 +868,17 @@ Finally, the full proposed method, which includes the non-linear tanh activation
 \end{tabular}
 \end{table*}
 
-{To evaluate the practical viability of the proposed framework, we analyze the computational costs introduced by the client-side Obfuscator and the server-side Deobfuscator. The results, summarized in Table}~\ref{tab:overheads}{, demonstrate that the proposed approach provides strong privacy guarantees with manageable and well-defined overhead.
+\rev{To evaluate the practical viability of the proposed framework, we analyze the computational costs introduced by the client-side Obfuscator and the server-side Deobfuscator. The results, summarized in Table~\ref{tab:overheads}, show that the proposed approach provides empirical reconstruction resistance with manageable and well-defined overhead.}
 
 The client-side Obfuscator is designed for high efficiency, making it suitable for deployment on edge devices. Despite having more parameters than the original embedding layer, its architecture is computationally lean. For a 224x224 input, it requires significantly fewer GFLOPs, 0.08, compared to the standard ViT patch embedding, 0.23. Consequently, its inference latency is nearly identical to the baseline, ~1.0 ms, indicating that the privacy-preserving transformation on the client side introduces a negligible performance overhead.
 
-The primary computational cost is introduced by the server-side Deobfuscator, which replaces the standard embedding layer. The Deobfuscator has a larger parameter count and requires more GFLOPs, resulting in increased inference latency ($\simeq$ 10.06 ms for a 224x224 input and $\simeq$ 31.44 ms for a 384x384 input). While this represents a notable increase over the original embedding layer's latency, this cost is fixed and represents an acceptable trade-off for enabling privacy-preserving inference on an untrusted server. For many applications, this latency is a small fraction of the total time required by the subsequent large-scale backbone model, making the overall impact on system performance reasonable.}
+The primary computational cost is introduced by the server-side Deobfuscator, which replaces the standard embedding layer. The Deobfuscator has a larger parameter count and requires more GFLOPs, resulting in increased inference latency ($\simeq$ 10.06 ms for a 224x224 input and $\simeq$ 31.44 ms for a 384x384 input). While this represents a notable increase over the original embedding layer's latency, this cost is fixed and represents an acceptable trade-off for enabling privacy-preserving inference on an untrusted server. For many applications, this latency is a small fraction of the total time required by the subsequent large-scale backbone model, making the overall impact on system performance reasonable.
 
 \section{Conclusion} \label{sec:con}
 
-This paper presents a new modular framework for privacy-preserving vision inference designed for deployment in untrusted computation environments. By decoupling image obfuscation from model inference and eliminating the need for image reconstruction, the proposed approach ensures strong privacy guarantees while maintaining compatibility with existing transformer-based vision models. The channel-wise patch-level obfuscator, paired with a lightweight deobfuscator network, enables accurate inference from visually anonymized inputs. We further reinforce the system's security through Merkle tree--based attestation and randomized obfuscation scheduling. Experimental results across diverse tasks confirm the practicality and robustness of our design, with minimal performance loss and substantial resilience to inversion and tampering attacks.
+\rev{This paper presents a modular framework for privacy-preserving vision inference designed for deployment in untrusted computation environments. By decoupling image obfuscation from model inference and avoiding server-side image reconstruction, the proposed approach provides empirical resistance to the reconstruction attacks evaluated in this work while maintaining compatibility with existing transformer-based vision models. The channel-wise patch-level obfuscator, paired with a lightweight deobfuscator network, enables accurate inference from visually anonymized inputs. We further reinforce execution integrity through Merkle tree--based attestation and optional randomized obfuscation scheduling. Experimental results across classification, retrieval, detection, and anomaly-detection tasks support the practicality of the design, while the reconstruction tables clarify its attack-bounded security scope.}
 
-While our method showed good performance under strong privacy constraints, it has limitations in the number of model parameters. In particular, the deobfuscator, though efficient to train, requires a separate set of projection layers per output patch, which may introduce scalability challenges for high-resolution inputs or dense downstream tasks. These limitations will be addressed in future work.
+\rev{While our method shows good utility under visual obfuscation, it has limitations in the number of model parameters. In particular, the deobfuscator, though efficient to train, requires a separate set of projection layers per output patch, which may introduce scalability challenges for high-resolution inputs or dense downstream tasks. These limitations will be addressed in future work.}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
